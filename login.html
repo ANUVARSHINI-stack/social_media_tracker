@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Social Media Tracker</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms&v=20260617a"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,57 +18,107 @@
         extend: {
           colors: {
             primary: "#4744e5",
-            surface: "#f6f8fb",
+            primaryDark: "#3633ca",
+            surface: "#eef2ff",
             card: "#ffffff",
-            ink: "#202534",
-            muted: "#6a7285",
-            border: "#e5e9f2",
-            accent: "#00C875"
+            ink: "#1f2432",
+            muted: "#697386",
+            border: "#e4e9f2",
+            accent: "#00C875",
+            panel: "#0f172a"
+          },
+          boxShadow: {
+            premium: "0 40px 100px -46px rgba(15, 23, 42, 0.42)",
+            soft: "0 20px 46px -22px rgba(71, 68, 229, 0.28)"
           }
         }
       }
     };
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body {
+      font-family: "Inter", sans-serif;
+      background:
+        linear-gradient(135deg, rgba(71, 68, 229, 0.08), rgba(0, 200, 117, 0.05)),
+        linear-gradient(180deg, #f8faff 0%, #eef3fb 100%);
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 85%);
+      pointer-events: none;
+    }
+
     .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
     }
   </style>
 </head>
-<body class="min-h-screen bg-surface text-ink">
-  <div class="flex min-h-screen items-center justify-center px-6 py-10">
-    <div class="w-full max-w-md">
-      <div class="mb-6 text-center">
-        <div class="inline-flex items-center gap-3 rounded-full border border-border bg-white px-4 py-2 shadow-sm">
-          <span class="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary text-white">
-            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+<body class="min-h-screen text-ink">
+  <div class="flex min-h-screen items-center justify-center px-5 py-10 sm:px-6">
+    <div class="w-full max-w-[460px]">
+      <div class="mb-8 text-center">
+        <div class="inline-flex items-center gap-3 rounded-full border border-white/80 bg-white px-5 py-3 shadow-soft">
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primaryDark text-white shadow-lg shadow-primary/25">
+            <span class="material-symbols-outlined text-[22px]">dashboard</span>
           </span>
-          <span class="text-base font-semibold">Social Media Tracker</span>
+          <span class="text-lg font-bold tracking-tight text-ink">Social Media Tracker</span>
         </div>
       </div>
 
-      <div class="rounded-[28px] border border-border bg-card p-7 shadow-[0_24px_60px_-28px_rgba(32,37,52,0.28)] lg:p-9">
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold tracking-tight">Sign in</h1>
-          <p class="mt-2 text-sm leading-6 text-muted">Use your email and password to continue.</p>
+      <div class="overflow-hidden rounded-[34px] border border-white/80 bg-white shadow-premium">
+        <div class="relative overflow-hidden border-b border-slate-100 px-7 pb-6 pt-7 sm:px-8 sm:pt-8">
+          <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-[#6d67ff] to-accent"></div>
+          <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary">
+            <span class="material-symbols-outlined text-[28px]">lock_person</span>
+          </div>
+          <h1 class="text-[32px] font-bold tracking-tight text-ink">Welcome back</h1>
+          <p class="mt-2 max-w-[280px] text-sm leading-6 text-muted">Use your work email and password to access your dashboard.</p>
         </div>
 
-        <form id="login-form" class="space-y-5">
-          <div class="space-y-2">
-            <label for="login-email" class="block text-sm font-medium text-ink">Email</label>
-            <input id="login-email" type="email" class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" placeholder="name@company.com" required>
-          </div>
-          <div class="space-y-2">
-            <label for="login-password" class="block text-sm font-medium text-ink">Password</label>
-            <input id="login-password" type="password" class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10" placeholder="Enter password" required>
-          </div>
-          <p id="login-error" class="hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"></p>
-          <button id="login-submit" type="submit" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-semibold text-white shadow-lg shadow-primary/20 transition hover:opacity-95 active:scale-[0.99]">
-            <span class="material-symbols-outlined text-[18px]">lock</span>
-            <span>Sign In</span>
-          </button>
-        </form>
+        <div class="px-7 py-7 sm:px-8 sm:py-8">
+          <form id="login-form" class="space-y-5">
+            <div class="space-y-2">
+              <label for="login-email" class="block text-sm font-semibold text-ink">Email</label>
+              <input
+                id="login-email"
+                type="email"
+                class="h-14 w-full rounded-2xl border border-border bg-slate-50 px-4 text-sm text-ink outline-none transition duration-200 placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
+                placeholder="name@company.com"
+                required
+              >
+            </div>
+
+            <div class="space-y-2">
+              <label for="login-password" class="block text-sm font-semibold text-ink">Password</label>
+              <input
+                id="login-password"
+                type="password"
+                class="h-14 w-full rounded-2xl border border-border bg-slate-50 px-4 text-sm text-ink outline-none transition duration-200 placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
+                placeholder="Enter password"
+                required
+              >
+            </div>
+
+            <p id="login-error" class="hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"></p>
+
+            <button
+              id="login-submit"
+              type="submit"
+              class="flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-primaryDark text-sm font-semibold text-white shadow-lg shadow-primary/25 transition duration-200 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <span class="material-symbols-outlined text-[18px]">login</span>
+              <span>Sign In</span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -80,18 +130,17 @@
       const passwordInput = document.getElementById("login-password");
       const errorBox = document.getElementById("login-error");
       const submitButton = document.getElementById("login-submit");
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         errorBox.classList.add("hidden");
         submitButton.disabled = true;
-        submitButton.classList.add("opacity-70");
 
         const result = await AUTH.login(emailInput.value.trim(), passwordInput.value);
         if (!result.ok) {
           errorBox.textContent = result.message || "Login failed.";
           errorBox.classList.remove("hidden");
           submitButton.disabled = false;
-          submitButton.classList.remove("opacity-70");
           return;
         }
 
