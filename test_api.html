@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Verification Suite</title>
+    <script src="config.js?v=20260617a"></script>
     <style>
         body { font-family: sans-serif; padding: 20px; line-height: 1.5; background: #f3f4f6; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
@@ -24,7 +25,7 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwAIMCCbslUSxGEoN60IkA8WVCDmQaFkw1M6AR9tWTCXzF5bxcUr2WZ48exC9EKdKA7/exec";
+        const API_URL = (window.CONFIG && CONFIG.APPS_SCRIPT_URL) || "";
 
         async function verifyAPI() {
             const statusEl = document.getElementById("status");
@@ -32,6 +33,9 @@
             const outputEl = document.getElementById("output");
 
             try {
+                if (!API_URL) {
+                    throw new Error("Apps Script URL is not configured in config.js");
+                }
                 statusEl.textContent = "Fetching data from Google Sheets...";
                 statusEl.className = "status";
 
@@ -74,19 +78,22 @@
                     report += `### Posts Columns:\n\`\`\`json\n${JSON.stringify(Object.keys(data.posts[0]), null, 2)}\n\`\`\`\n`;
                 }
 
-                // POST back to local server
-                statusEl.textContent = "Saving test report to workspace...";
-                const localResponse = await fetch("/save-test-report", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ report })
-                });
+                if (/^(localhost|127\\.0\\.0\\.1)$/i.test(window.location.hostname)) {
+                    statusEl.textContent = "Saving test report to workspace...";
+                    const localResponse = await fetch("/save-test-report", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ report })
+                    });
 
-                const localData = await localResponse.json();
-                if (localData.status === "success") {
-                    statusEl.textContent = "Google Sheets API verified & Test Report saved!";
+                    const localData = await localResponse.json();
+                    if (localData.status === "success") {
+                        statusEl.textContent = "Google Sheets API verified & Test Report saved!";
+                    } else {
+                        throw new Error("Failed to save report: " + localData.message);
+                    }
                 } else {
-                    throw new Error("Failed to save report: " + localData.message);
+                    statusEl.textContent = "Google Sheets API verified successfully!";
                 }
 
             } catch (err) {

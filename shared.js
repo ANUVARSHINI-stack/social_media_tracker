@@ -301,6 +301,14 @@ function injectResponsiveShellStyles() {
   document.head.appendChild(style);
 }
 
+function getTodayLocalDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function normalizeResponsiveShell() {
   const main = document.querySelector("main");
   if (!main) return;
@@ -709,7 +717,8 @@ function setupNotificationPanel() {
 
   function renderLogs() {
     const logs = API.getLogs().slice(0, 10); // show last 10 logs
-    const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate <= new Date().toISOString().split('T')[0]).length;
+    const todayStr = getTodayLocalDateString();
+    const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate && p.postingDate <= todayStr).length;
     
     if (pendingCount > 0) {
       dot.classList.remove("hidden");
@@ -759,7 +768,8 @@ function setupNotificationPanel() {
 
   // Initial bell count set
   setTimeout(() => {
-    const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate <= new Date().toISOString().split('T')[0]).length;
+    const todayStr = getTodayLocalDateString();
+    const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate && p.postingDate <= todayStr).length;
     if (pendingCount > 0) dot.classList.remove("hidden");
   }, 500);
 }
@@ -771,7 +781,8 @@ function updateNotificationBellCount() {
   const dot = button.querySelector(".absolute");
   if (!dot) return;
   
-  const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate <= new Date().toISOString().split('T')[0]).length;
+  const todayStr = getTodayLocalDateString();
+  const pendingCount = API.getPosts().filter(p => p.status === "Pending" && p.postingDate && p.postingDate <= todayStr).length;
   if (pendingCount > 0) {
     dot.classList.remove("hidden");
   } else {
