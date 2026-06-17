@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Settings | Social Media Tracker</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="config.js?v=20260616f"></script>
+    <script src="api.js?v=20260616k"></script>
+    <script src="auth.js?v=20260616d"></script>
+    <script src="shared.js?v=20260616m"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .modal-overlay {
+            background: rgba(25, 28, 29, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E6E9EF;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #D1D5DB;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed-dim": "#e0b6ff",
+                        "status-completed": "#00C875",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c276ff",
+                        "on-tertiary-fixed-variant": "#004f50",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#09006b",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2c24ce",
+                        "inverse-primary": "#c1c1ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#5df8f8",
+                        "tertiary": "#006969",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-fixed": "#002020",
+                        "primary-container": "#6161ff",
+                        "on-secondary-container": "#4c007d",
+                        "on-secondary-fixed": "#2e004e",
+                        "secondary": "#8337be",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#4745e5",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#f2daff",
+                        "outline-variant": "#c7c4d8",
+                        "text-secondary": "#676879",
+                        "status-missed": "#FF3D57",
+                        "border-subtle": "#E6E9EF",
+                        "surface-container-high": "#e7e8e9",
+                        "text-primary": "#333333",
+                        "tertiary-container": "#008484",
+                        "on-surface-variant": "#464555",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-fixed-dim": "#34dbdb",
+                        "on-primary": "#ffffff",
+                        "status-scheduled": "#FFCB00",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#767587",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "primary-fixed": "#e1dfff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#c1c1ff",
+                        "primary": "#4744e5",
+                        "on-secondary-fixed-variant": "#6915a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+    <!-- Sidebar Navigation -->
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-border-subtle dark:border-outline-variant flex flex-col py-unit z-50">
+        <div class="px-6 py-4 mb-4">
+            <h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary">Social Media Tracker</h1>
+            <p class="text-label-md font-label-md text-text-secondary opacity-70 hidden"></p>
+        </div>
+        <nav class="flex-grow space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="index.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="text-label-md font-label-md">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="shops.html">
+                <span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+                <span class="text-label-md font-label-md">Shops</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="shop_details_calendar.html">
+                <span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                <span class="text-label-md font-label-md">Calendar</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="reports.html">
+                <span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                <span class="text-label-md font-label-md">Reports</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-surface-container-low dark:bg-surface-container-highest" href="settings.html">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="text-label-md font-label-md">Settings</span>
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-border-subtle pt-4">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span class="text-label-md font-label-md">Help</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span class="text-label-md font-label-md">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="ml-64 min-h-screen">
+        <!-- Top Navbar -->
+        <header class="sticky top-0 z-40 w-full bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-border-subtle dark:border-outline-variant flex justify-between items-center h-16 px-gutter">
+            <div class="flex items-center gap-4">
+                <h2 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">Settings</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                    <img alt="User Avatar" class="w-full h-full object-cover" src=""/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Canvas -->
+        <div class="p-gutter max-w-container-max mx-auto space-y-8">
+            <!-- Header Title -->
+            <div>
+                <h3 class="text-headline-md font-headline-md text-text-primary">System Settings</h3>
+                <p class="text-text-secondary text-body-md">Configure publishing criteria, alert rules, and manage your operations team.</p>
+            </div>
+
+            <!-- Settings Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+                <!-- Left Column (Notifications) -->
+                <div class="contents">
+                    <!-- Module 1: Notification Settings -->
+                    <div class="order-1 lg:col-span-1 bg-white border border-border-subtle p-6 rounded-2xl shadow-sm space-y-4">
+                        <h4 class="font-bold text-text-primary text-body-lg flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">notifications_active</span>
+                            <span>Notification Rules</span>
+                        </h4>
+                        <div class="space-y-4 pt-2">
+                            <div class="flex items-center justify-between py-1">
+                                <div>
+                                    <p class="font-semibold text-text-primary text-body-md">Daily Reminder Email</p>
+                                    <p class="text-label-sm text-text-secondary">Send daily alert for overdue posts</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="notif-enabled" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-status-completed"></div>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-label-sm text-text-secondary font-medium">Daily Alert Trigger Time</label>
+                                <input id="notif-time" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="time" value="21:00"/>
+                            </div>
+                            <button onclick="saveNotificationSettings()" class="w-full bg-primary hover:bg-primary/95 text-on-primary py-2.5 rounded-xl font-bold transition-all shadow-md hover:shadow-lg active:scale-95 text-label-md">
+                                Save Notifications
+                            </button>
+                            <button onclick="sendPendingEmailsNow()" class="w-full border border-border-subtle hover:border-primary hover:text-primary text-on-surface-variant py-2.5 rounded-xl font-bold transition-all active:scale-95 text-label-md">
+                                Send Pending Emails Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Module 2: Team Members CRUD -->
+                    <div class="order-4 lg:col-span-2 bg-white border border-border-subtle p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-text-primary text-body-lg flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">groups</span>
+                                <span>Team Members</span>
+                            </h4>
+                            <button onclick="openAddMemberModal()" class="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-1.5 rounded-lg font-bold text-label-sm shadow-sm hover:shadow-md transition-all active:scale-95">
+                                <span class="material-symbols-outlined text-sm">person_add</span>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                        <p class="text-label-sm text-text-secondary pb-2">Assign content responsibility to your team.</p>
+
+                        <div class="border border-border-subtle rounded-xl overflow-hidden shadow-xs">
+                            <div class="overflow-x-auto custom-scrollbar max-h-[360px]">
+                                <table class="w-full text-left border-collapse">
+                                    <thead class="bg-surface-container-low border-b border-border-subtle">
+                                        <tr>
+                                            <th class="px-4 py-3 text-label-sm font-semibold uppercase text-text-secondary">Name</th>
+                                            <th class="px-4 py-3 text-label-sm font-semibold uppercase text-text-secondary">Shop Assigned</th>
+                                            <th class="px-4 py-3 text-label-sm font-semibold uppercase text-text-secondary">Password</th>
+                                            <th class="px-4 py-3 text-label-sm font-semibold uppercase text-text-secondary">Role</th>
+                                            <th class="px-4 py-3 text-label-sm font-semibold uppercase text-text-secondary text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="team-members-tbody" class="divide-y divide-border-subtle">
+                                        <!-- populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Categories & Platforms) -->
+                <div class="contents">
+                    <div class="contents">
+                        <!-- Module 3: Custom Categories -->
+                        <div class="order-2 lg:col-span-1 bg-white border border-border-subtle p-6 rounded-2xl shadow-sm space-y-4 flex flex-col min-h-[300px]">
+                            <h4 class="font-bold text-text-primary text-body-lg flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">category</span>
+                                <span>Post Categories</span>
+                            </h4>
+                            <p class="text-label-sm text-text-secondary">Define content classification tags.</p>
+                            
+                            <!-- Tags Container -->
+                            <div id="categories-container" class="flex-grow flex flex-wrap gap-2 pt-2 content-start">
+                                <!-- populated dynamically -->
+                            </div>
+
+                            <div class="flex gap-2 pt-4">
+                                <input id="new-category-input" placeholder="New category..." class="flex-1 h-9 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text"/>
+                                <button onclick="addCategory()" class="bg-primary hover:bg-primary-container text-on-primary h-9 w-9 rounded-lg flex items-center justify-center shadow-sm active:scale-95 transition-all">
+                                    <span class="material-symbols-outlined">add</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Module 4: Custom Platforms -->
+                        <div class="order-3 lg:col-span-1 bg-white border border-border-subtle p-6 rounded-2xl shadow-sm space-y-4 flex flex-col min-h-[300px]">
+                            <h4 class="font-bold text-text-primary text-body-lg flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">cell_tower</span>
+                                <span>Social Media Platforms</span>
+                            </h4>
+                            <p class="text-label-sm text-text-secondary">Configure available publishing platforms.</p>
+                            
+                            <!-- Tags Container -->
+                            <div id="platforms-container" class="flex-grow flex flex-wrap gap-2 pt-2 content-start">
+                                <!-- populated dynamically -->
+                            </div>
+
+                            <div class="flex gap-2 pt-4">
+                                <input id="new-platform-input" placeholder="New platform..." class="flex-1 h-9 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text"/>
+                                <button onclick="addPlatform()" class="bg-primary hover:bg-primary-container text-on-primary h-9 w-9 rounded-lg flex items-center justify-center shadow-sm active:scale-95 transition-all">
+                                    <span class="material-symbols-outlined">add</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Module 5: Team Roles -->
+                        <div class="order-5 lg:col-span-1 bg-white border border-border-subtle p-6 rounded-2xl shadow-sm space-y-4 flex flex-col min-h-[300px]">
+                            <h4 class="font-bold text-text-primary text-body-lg flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">badge</span>
+                                <span>Team Roles</span>
+                            </h4>
+                            <p class="text-label-sm text-text-secondary">Manage roles available while adding members.</p>
+
+                            <div id="roles-container" class="flex-grow flex flex-wrap gap-2 pt-2 content-start">
+                                <!-- populated dynamically -->
+                            </div>
+
+                            <div class="flex gap-2 pt-4">
+                                <input id="new-role-input" placeholder="New role..." class="flex-1 h-9 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text"/>
+                                <button onclick="addRole()" class="bg-primary hover:bg-primary-container text-on-primary h-9 w-9 rounded-lg flex items-center justify-center shadow-sm active:scale-95 transition-all">
+                                    <span class="material-symbols-outlined">add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Team Member Modal -->
+    <div id="team-member-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center hidden" style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+        <div class="bg-surface-container-lowest w-full max-w-[400px] rounded-xl shadow-2xl border border-border-subtle overflow-hidden flex flex-col">
+            <!-- Modal Header -->
+            <div class="px-gutter py-4 border-b border-border-subtle flex justify-between items-center bg-surface">
+                <h3 class="text-body-lg font-bold text-on-surface" id="modal-member-title">Add Team Member</h3>
+                <button class="text-on-surface-variant hover:text-on-surface transition-colors" onclick="closeMemberModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <!-- Modal Body -->
+            <form id="team-member-form" onsubmit="handleMemberFormSubmit(event)" class="p-gutter space-y-4">
+                <div class="space-y-1">
+                    <label class="block text-label-sm text-text-secondary font-medium">Full Name</label>
+                    <input id="member-name" required class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text"/>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-label-sm text-text-secondary font-medium">Email Address</label>
+                    <input id="member-email" required class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="email"/>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-label-sm text-text-secondary font-medium">Password</label>
+                    <div class="relative">
+                        <input id="member-password" class="w-full h-10 px-3 pr-11 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="password"/>
+                        <button type="button" id="member-password-toggle" class="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-container transition-colors" aria-label="Show password">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-label-sm text-text-secondary font-medium">Role</label>
+                    <div class="relative">
+                        <select id="member-role" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+                            <option value="Admin">Admin</option>
+                            <option value="Viewer">Viewer</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Modal Footer -->
+                <div class="pt-4 flex justify-end gap-3 border-t border-border-subtle mt-6">
+                    <button type="button" onclick="closeMemberModal()" class="px-4 py-2 rounded-lg text-on-surface-variant font-semibold hover:bg-surface-container transition-colors text-label-md">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-primary text-on-primary font-bold hover:bg-primary-container shadow-md shadow-primary/20 transition-all active:scale-95 text-label-md">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let settingsData = [];
+        let originalMemberName = null; // Track name when editing team member
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSettings();
+            bindSettingsInputShortcuts();
+
+            // Listen for cross-tab sync and local changes
+            window.addEventListener("api-data-refreshed", () => {
+                loadSettings();
+            });
+            window.addEventListener("api-local-change", () => {
+                loadSettings();
+            });
+
+            API.forceSync().then(() => {
+                loadSettings();
+            });
+        });
+
+        function loadSettings() {
+            settingsData = API.getSettings();
+
+            renderNotificationInputs();
+            renderCategories();
+            renderPlatforms();
+            renderRoles();
+            populateMemberRoleOptions();
+            renderTeamMembers();
+        }
+
+        function bindSettingsInputShortcuts() {
+            const categoryInput = document.getElementById("new-category-input");
+            const platformInput = document.getElementById("new-platform-input");
+            const roleInput = document.getElementById("new-role-input");
+            const passwordToggle = document.getElementById("member-password-toggle");
+
+            if (categoryInput) {
+                categoryInput.addEventListener("keydown", (event) => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    addCategory();
+                });
+            }
+
+            if (platformInput) {
+                platformInput.addEventListener("keydown", (event) => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    addPlatform();
+                });
+            }
+
+            if (roleInput) {
+                roleInput.addEventListener("keydown", (event) => {
+                    if (event.key !== "Enter") return;
+                    event.preventDefault();
+                    addRole();
+                });
+            }
+
+            if (passwordToggle) {
+                passwordToggle.addEventListener("click", toggleMemberPasswordVisibility);
+            }
+        }
+
+        function toggleMemberPasswordVisibility() {
+            const input = document.getElementById("member-password");
+            const toggle = document.getElementById("member-password-toggle");
+            if (!input || !toggle) return;
+            const isPassword = input.type === "password";
+            input.type = isPassword ? "text" : "password";
+            toggle.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+            toggle.innerHTML = `<span class="material-symbols-outlined text-[18px]">${isPassword ? "visibility_off" : "visibility"}</span>`;
+        }
+
+        // Notifications
+        function normalizeNotificationTime(value) {
+            if (!value) return "21:00";
+            const text = String(value).trim();
+            if (/^\d{2}:\d{2}/.test(text)) return text.substring(0, 5);
+            const parsed = new Date(text);
+            if (!Number.isNaN(parsed.getTime())) {
+                return `${String(parsed.getHours()).padStart(2, "0")}:${String(parsed.getMinutes()).padStart(2, "0")}`;
+            }
+            return "21:00";
+        }
+
+        function renderNotificationInputs() {
+            const notifSetting = settingsData.find(s => s.type === "Notification" && s.name === "Daily reminder email");
+            
+            const enabled = notifSetting ? String(notifSetting.value1).toLowerCase() === "true" : true;
+            const time = notifSetting ? normalizeNotificationTime(notifSetting.value2) : "21:00";
+
+            document.getElementById("notif-enabled").checked = enabled;
+            document.getElementById("notif-time").value = time;
+        }
+
+        async function saveNotificationSettings() {
+            const enabled = document.getElementById("notif-enabled").checked;
+            const time = document.getElementById("notif-time").value;
+
+            const payload = {
+                type: "Notification",
+                name: "Daily reminder email",
+                value1: enabled ? "true" : "false",
+                value2: time
+            };
+            const saved = API.saveNotificationSetting
+                ? await API.saveNotificationSetting(payload)
+                : await API.saveSetting(payload);
+
+            if (!saved) {
+                const detail = API.getLastError ? API.getLastError() : "";
+                alert(`Notification settings could not be saved or the email trigger could not be created.${detail ? "\n\nDetails: " + detail : ""}`);
+                loadSettings();
+                return;
+            }
+            alert("Notification settings saved successfully!");
+        }
+
+        async function sendPendingEmailsNow() {
+            if (!API.sendPendingNotifications) {
+                alert("Email notification action is unavailable. Please redeploy backend.gs and refresh this page.");
+                return;
+            }
+            const result = await API.sendPendingNotifications();
+            if (!result) {
+                const detail = API.getLastError ? API.getLastError() : "";
+                alert(`Pending email notifications could not be sent. Check Apps Script permissions and deployment.${detail ? "\n\nDetails: " + detail : ""}`);
+                return;
+            }
+            alert(`Pending email check completed. Emails sent for ${result.sent || 0} post(s).`);
+            loadSettings();
+        }
+
+        // Categories
+        function renderCategories() {
+            const container = document.getElementById("categories-container");
+            container.innerHTML = "";
+
+            const finalCats = settingsData
+                .filter(s => s.type === "Category")
+                .map(s => s.name)
+                .filter(Boolean);
+
+            if (finalCats.length === 0) {
+                container.innerHTML = `<span class="text-body-md text-text-secondary italic">No categories configured.</span>`;
+                return;
+            }
+
+            finalCats.forEach(cat => {
+                const tag = document.createElement("span");
+                tag.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-label-md font-semibold";
+                tag.innerHTML = `
+                    <span>${cat}</span>
+                    <button onclick="deleteCategory('${cat}')" class="hover:text-error transition-colors flex items-center">
+                        <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        async function addCategory() {
+            const input = document.getElementById("new-category-input");
+            const cat = input.value.trim();
+            if (!cat) return;
+            input.value = "";
+
+            const saved = await API.saveSetting({
+                type: "Category",
+                name: cat
+            });
+
+            if (!saved) {
+                alert("Category could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+                loadSettings();
+                return;
+            }
+            loadSettings();
+        }
+
+        async function deleteCategory(cat) {
+            await API.deleteSetting("Category", cat);
+            loadSettings();
+        }
+
+        // Platforms
+        function renderPlatforms() {
+            const container = document.getElementById("platforms-container");
+            container.innerHTML = "";
+
+            const finalPlats = settingsData
+                .filter(s => s.type === "Platform")
+                .map(s => s.name)
+                .filter(Boolean);
+
+            if (finalPlats.length === 0) {
+                container.innerHTML = `<span class="text-body-md text-text-secondary italic">No platforms configured.</span>`;
+                return;
+            }
+
+            finalPlats.forEach(plat => {
+                const tag = document.createElement("span");
+                tag.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-md font-semibold";
+                tag.innerHTML = `
+                    <span>${plat}</span>
+                    <button onclick="deletePlatform('${plat}')" class="hover:text-error transition-colors flex items-center">
+                        <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        async function addPlatform() {
+            const input = document.getElementById("new-platform-input");
+            const plat = input.value.trim();
+            if (!plat) return;
+            input.value = "";
+
+            const saved = await API.saveSetting({
+                type: "Platform",
+                name: plat
+            });
+
+            if (!saved) {
+                alert("Platform could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+                loadSettings();
+                return;
+            }
+            loadSettings();
+        }
+
+        async function deletePlatform(plat) {
+            await API.deleteSetting("Platform", plat);
+            loadSettings();
+        }
+
+        // Roles
+        function jsString(value) {
+            return JSON.stringify(String(value || ""));
+        }
+
+        function getRoleOptions() {
+            const deletedRoles = settingsData
+                .filter(s => s.type === "DeletedMemberRole")
+                .map(s => s.name)
+                .filter(Boolean);
+            const roleSettings = settingsData
+                .filter(s => s.type === "MemberRole")
+                .map(s => s.name)
+                .filter(role => role && !deletedRoles.includes(role));
+            const defaults = ["Admin", "Viewer"];
+            return [...new Set([...defaults.filter(role => !deletedRoles.includes(role)), ...roleSettings])];
+        }
+
+        function renderRoles() {
+            const container = document.getElementById("roles-container");
+            if (!container) return;
+            container.innerHTML = "";
+
+            const roles = getRoleOptions();
+            if (roles.length === 0) {
+                container.innerHTML = `<span class="text-body-md text-text-secondary italic">No roles configured.</span>`;
+                return;
+            }
+
+            roles.forEach(role => {
+                const tag = document.createElement("span");
+                tag.className = "inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-label-md font-semibold border border-primary/20";
+                const label = document.createElement("span");
+                label.textContent = role;
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "hover:text-error transition-colors flex items-center";
+                deleteButton.title = "Delete role";
+                deleteButton.innerHTML = `<span class="material-symbols-outlined text-[16px]">close</span>`;
+                deleteButton.addEventListener("click", () => deleteRole(role));
+                tag.append(label, deleteButton);
+                container.appendChild(tag);
+            });
+        }
+
+        function populateMemberRoleOptions(selectedRole = "") {
+            const dropdown = document.getElementById("member-role");
+            if (!dropdown) return;
+            const roles = getRoleOptions();
+            const finalRoles = roles.length > 0 ? roles : ["Editor"];
+            const current = selectedRole || dropdown.value || "Editor";
+            dropdown.innerHTML = "";
+            finalRoles.forEach(role => {
+                const opt = document.createElement("option");
+                opt.value = role;
+                opt.textContent = role;
+                dropdown.appendChild(opt);
+            });
+            if (current && !finalRoles.includes(current)) {
+                const opt = document.createElement("option");
+                opt.value = current;
+                opt.textContent = current;
+                dropdown.appendChild(opt);
+            }
+            dropdown.value = current && [...dropdown.options].some(opt => opt.value === current) ? current : finalRoles[0];
+        }
+
+        async function addRole() {
+            const input = document.getElementById("new-role-input");
+            const role = input.value.trim();
+            if (!role) return;
+            input.value = "";
+
+            const exists = getRoleOptions().some(existing => existing.toLowerCase() === role.toLowerCase());
+            if (exists) {
+                alert("This role already exists.");
+                return;
+            }
+
+            const saved = await API.saveSetting({
+                type: "MemberRole",
+                name: role
+            });
+            await API.deleteSetting("DeletedMemberRole", role);
+
+            if (!saved) {
+                alert("Role could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+                loadSettings();
+                return;
+            }
+            loadSettings();
+        }
+
+        async function deleteRole(role) {
+            await API.deleteSetting("MemberRole", role);
+            await API.saveSetting({ type: "DeletedMemberRole", name: role });
+            loadSettings();
+        }
+
+        // Team Members
+        function escapeHTML(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function renderTeamMembers() {
+            const tbody = document.getElementById("team-members-tbody");
+            tbody.innerHTML = "";
+
+            const members = settingsData.filter(s => s.type === "TeamMember");
+            const shops = API.getShops();
+
+            if (members.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-4 py-6 text-center text-body-md text-text-secondary italic">
+                            No team members configured.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            members.forEach(m => {
+                const assignedShops = shops
+                    .filter(shop => shop.assignedPerson === m.name)
+                    .map(shop => shop.name)
+                    .filter(Boolean);
+                const assignedText = assignedShops.length > 0 ? assignedShops.join(", ") : "No shops assigned";
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-surface transition-colors group";
+                tr.innerHTML = `
+                    <td class="px-4 py-3">
+                        <div class="text-text-primary text-body-md font-medium">${escapeHTML(m.name)}</div>
+                        <div class="text-text-secondary text-label-sm truncate max-w-[180px]" title="${escapeHTML(m.value1)}">${escapeHTML(m.value1)}</div>
+                    </td>
+                    <td class="px-4 py-3 text-text-secondary text-body-md">
+                        <div class="truncate max-w-[240px]" title="${escapeHTML(assignedText)}">${escapeHTML(assignedText)}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-text-secondary text-body-md">
+                        ${m.value3 ? '<span class="text-label-sm font-semibold text-text-primary">Protected</span>' : '<span class="text-label-sm text-text-secondary">Not set</span>'}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-text-secondary text-body-md">
+                        <span class="px-2 py-0.5 rounded bg-surface-container-highest text-text-primary text-label-sm font-semibold">${escapeHTML(m.value2 || 'Editor')}</span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openEditMemberModal('${m.name}', '${m.value1}', '${m.value2 || 'Viewer'}')" class="p-1 hover:bg-surface-container rounded text-primary transition-colors" title="Edit Member">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </button>
+                            <button onclick="deleteMember('${m.name}')" class="p-1 hover:bg-error-container rounded text-error transition-colors" title="Delete Member">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAddMemberModal() {
+            originalMemberName = null;
+            document.getElementById("modal-member-title").innerText = "Add Team Member";
+            document.getElementById("member-name").value = "";
+            document.getElementById("member-email").value = "";
+            document.getElementById("member-password").value = "";
+            document.getElementById("member-password").placeholder = "Set password";
+            populateMemberRoleOptions("Viewer");
+            showMemberModal();
+        }
+
+        function openEditMemberModal(name, email, role) {
+            originalMemberName = name;
+            document.getElementById("modal-member-title").innerText = "Edit Team Member";
+            document.getElementById("member-name").value = name;
+            document.getElementById("member-email").value = email;
+            document.getElementById("member-password").value = "";
+            document.getElementById("member-password").placeholder = "Leave blank to keep current password";
+            populateMemberRoleOptions(role || "Viewer");
+            showMemberModal();
+        }
+
+        function showMemberModal() {
+            const modal = document.getElementById("team-member-modal");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.style.opacity = "1";
+                modal.style.pointerEvents = "all";
+            }, 10);
+        }
+
+        function closeMemberModal() {
+            const modal = document.getElementById("team-member-modal");
+            modal.style.opacity = "0";
+            modal.style.pointerEvents = "none";
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 150);
+        }
+
+        async function handleMemberFormSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("member-name").value.trim();
+            const email = document.getElementById("member-email").value.trim();
+            const password = document.getElementById("member-password").value.trim();
+            const role = document.getElementById("member-role").value;
+            const existingMember = settingsData.find(setting => setting.type === "TeamMember" && setting.name === originalMemberName);
+            const storedPassword = await AUTH.prepareStoredPassword(password, existingMember ? existingMember.value3 : "");
+
+            if (!storedPassword) {
+                alert("Password is required for new team members.");
+                return;
+            }
+
+            closeMemberModal();
+            if (originalMemberName && originalMemberName !== name) {
+                // Name changed, so we need to delete old member settings key to prevent duplicate entry
+                await API.deleteSetting("TeamMember", originalMemberName);
+            }
+
+            const saved = await API.saveSetting({
+                type: "TeamMember",
+                name: name,
+                value1: email,
+                value2: role,
+                value3: storedPassword
+            });
+
+            if (!saved) {
+                alert("Team member could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+                loadSettings();
+                return;
+            }
+            if (originalMemberName && existingMember && existingMember.value1 && existingMember.value1 !== email && AUTH.removeCredentialOverride) {
+                AUTH.removeCredentialOverride(existingMember.value1);
+            }
+            if (AUTH.setCredentialOverride) {
+                AUTH.setCredentialOverride({
+                    name,
+                    email,
+                    role,
+                    passwordHash: storedPassword
+                });
+            }
+            if (API.sendPendingNotificationsForMember) {
+                API.sendPendingNotificationsForMember({ name, email });
+            }
+            loadSettings();
+        }
+
+        async function deleteMember(name) {
+            if (confirm(`Are you sure you want to delete the team member "${name}"?`)) {
+                const existingMember = settingsData.find(setting => setting.type === "TeamMember" && setting.name === name);
+                await API.deleteSetting("TeamMember", name);
+                if (existingMember && existingMember.value1 && AUTH.removeCredentialOverride) {
+                    AUTH.removeCredentialOverride(existingMember.value1);
+                }
+                loadSettings();
+            }
+        }
+    </script>
+</body>
+</html>

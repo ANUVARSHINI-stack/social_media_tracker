@@ -1,0 +1,933 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Social Media Tracker - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="config.js?v=20260616f"></script>
+<script src="api.js?v=20260616k"></script>
+<script src="auth.js?v=20260616d"></script>
+<script src="shared.js?v=20260616m"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#8337be",
+                    "on-surface-variant": "#464555",
+                    "on-tertiary-fixed": "#002020",
+                    "tertiary": "#006969",
+                    "error": "#ba1a1a",
+                    "text-primary": "#333333",
+                    "outline": "#767587",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "surface-container-low": "#f3f4f5",
+                    "tertiary-container": "#008484",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e7e8e9",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#5df8f8",
+                    "inverse-surface": "#2e3132",
+                    "surface-dim": "#d9dadb",
+                    "surface-container": "#edeeef",
+                    "on-secondary-container": "#4c007d",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#09006b",
+                    "tertiary-fixed-dim": "#34dbdb",
+                    "on-secondary-fixed-variant": "#6915a5",
+                    "on-primary-container": "#ffffff",
+                    "border-subtle": "#E6E9EF",
+                    "surface-tint": "#4745e5",
+                    "on-secondary-fixed": "#2e004e",
+                    "primary-container": "#6161ff",
+                    "outline-variant": "#c7c4d8",
+                    "on-background": "#191c1d",
+                    "on-primary-fixed-variant": "#2c24ce",
+                    "on-tertiary-container": "#ffffff",
+                    "inverse-primary": "#c1c1ff",
+                    "primary": "#4744e5",
+                    "secondary-fixed-dim": "#e0b6ff",
+                    "status-scheduled": "#FFCB00",
+                    "surface-container-highest": "#e1e3e4",
+                    "text-secondary": "#676879",
+                    "on-tertiary-fixed-variant": "#004f50",
+                    "on-surface": "#191c1d",
+                    "secondary-fixed": "#f2daff",
+                    "surface": "#f8f9fa",
+                    "primary-fixed": "#e1dfff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "background": "#f8f9fa",
+                    "status-completed": "#00C875",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-container": "#c276ff",
+                    "status-missed": "#FF3D57",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "container-max": "1440px",
+                    "unit": "8px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E6E9EF;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .shadow-premium {
+            box-shadow: 0px 10px 30px -5px rgba(0,0,0,0.08);
+        }
+        body {
+            background-color: #F7F8F9;
+        }
+        .modal-overlay {
+            background: rgba(25, 28, 29, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+        
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-active { animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body class="antialiased text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-6 bg-surface border-r border-border-subtle z-50">
+<div class="px-6 mb-8 flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">Social Media Tracker</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant hidden"></p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Active Navigation -->
+<a class="flex items-center px-3 py-2.5 text-primary font-bold border-l-4 border-primary bg-surface-container-low rounded-r-lg group transition-all duration-200" href="index.html">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg group transition-all duration-200" href="shops.html">
+<span class="material-symbols-outlined mr-3" data-icon="storefront">storefront</span>
+<span class="font-body-md text-body-md">Shops</span>
+</a>
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg group transition-all duration-200" href="shop_details_calendar.html">
+<span class="material-symbols-outlined mr-3" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md text-body-md">Calendar</span>
+</a>
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg group transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg group transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-3 border-t border-border-subtle pt-6 space-y-1">
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center px-3 py-2.5 text-on-surface-variant hover:bg-surface-container-lowest rounded-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Account</span>
+</a>
+</div>
+</aside>
+<!-- Top Header -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface/80 backdrop-blur-md border-b border-border-subtle z-40 px-margin-desktop flex justify-between items-center">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 transition-all focus-within:ring-2 focus-within:ring-primary/20">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md w-full placeholder:text-outline" placeholder="Search data, posts or shops..." type="text">
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-3">
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10" data-alt="A professional close-up portrait of a modern marketing manager with a warm smile, wearing a stylish blazer in a bright, sunlit creative office. The atmosphere is professional yet approachable, reflecting a corporate modern aesthetic with soft bokeh in the background highlighting sleek office furniture and warm interior lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-PC-xcxRCGAGBUm09n46vnbncwXRbRaVDMJBxRU_cQtrmJg20V0ftywU5eAH8Ay1WNmMBlSnhPom15E7CfcuzRLEEECP3PN1Lg2ebW5p_rOIvJptZdzt33dNm07OEaB57xCvGhBLhKwgtOo3vF3SqAb489J8HGcjSgm-klXEVLDR7SgOzMg9rSnrrFObafNk92kNTDxwGLSchPdGPJk_Z-B_Fs8D7iqsXBnwrhXp9y_DEhp_9FHEQIvFidV-OgRJamMJrZTUtpQ">
+<div class="hidden lg:block text-right">
+<p class="font-label-md text-label-md text-text-primary">Alex Sterling</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Admin Level</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-24 px-margin-desktop pb-12">
+<!-- Welcome Section -->
+<div class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary">Daily Performance</h2>
+<p class="font-body-md text-body-md text-text-secondary mt-1">Manage your multi-channel presence from a single source of truth.</p>
+</div>
+<button onclick="openModal()" class="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-label-md text-label-md hover:opacity-90 transition-all flex items-center space-x-2 shadow-premium" style="transform: translateY(0px); box-shadow: rgba(0, 0, 0, 0.08) 0px 10px 30px -5px; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);"><span class="material-symbols-outlined text-base" data-icon="add">add</span><span class="">Add&nbsp;New Shop</span></button>
+</div>
+<!-- KPI Grid - Bento Style -->
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<!-- Large Count 1: Posts To Be Done -->
+<div class="col-span-12 lg:col-span-7 bg-white rounded-xl border border-border-subtle shadow-premium p-6 overflow-hidden relative">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-label-md text-label-md text-text-secondary uppercase tracking-wider">Posts To Be Done Today</h3>
+<div class="flex items-baseline space-x-2 mt-2">
+<span class="font-display text-display text-primary" id="today-posts-count">0</span>
+<span class="text-status-scheduled font-label-sm text-label-sm" id="today-posts-diff">Pending</span>
+</div>
+</div>
+<div class="p-3 bg-primary-container/10 rounded-xl text-primary">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</div>
+</div>
+<div class="space-y-3" id="today-posts-list">
+<!-- Dynamically populated today's pending posts -->
+</div>
+<a class="mt-6 block text-center font-label-md text-label-md text-primary hover:underline" href="shop_details_calendar.html" id="today-posts-link">View All Schedule</a>
+</div>
+<!-- Large Count 2: Content To Create -->
+<div class="col-span-12 lg:col-span-5 bg-white rounded-xl border border-border-subtle shadow-premium p-6 flex flex-col" style="transform: translateY(0px); box-shadow: rgba(0, 0, 0, 0.08) 0px 10px 30px -5px; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="font-label-md text-label-md text-text-secondary uppercase tracking-wider">Content To Create Today</h3>
+<div class="flex items-baseline space-x-2 mt-2">
+<span class="font-display text-display text-secondary" id="tomorrow-posts-count">0</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">For Tomorrow</span>
+</div>
+</div>
+<div class="p-3 bg-secondary-container/10 rounded-xl text-secondary">
+<span class="material-symbols-outlined" data-icon="edit_square">edit_square</span>
+</div>
+</div>
+<div class="space-y-4 flex-1" id="tomorrow-posts-list">
+<!-- Dynamically populated tomorrow's pending posts -->
+</div>
+<button onclick="window.location.href='shop_details_calendar.html'" class="mt-4 w-full py-2 bg-secondary-container/10 text-secondary font-label-md text-label-md rounded-lg hover:bg-secondary-container/20 transition-all">
+                    Open Content Calendar
+                </button>
+</div>
+</div>
+<!-- Mini Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-gutter">
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-premium transition-all">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase mb-2">Total Shops</p>
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md text-text-primary" id="stat-shops">0</h4>
+<span class="material-symbols-outlined text-primary" data-icon="store">store</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-premium transition-all">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase mb-2">Posts This Month</p>
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md text-text-primary" id="stat-posts-month">0</h4>
+<span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-premium transition-all">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase mb-2">Posted This Month</p>
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md text-status-completed" id="stat-posted-month">0</h4>
+<span class="material-symbols-outlined text-status-completed" data-icon="check_circle">check_circle</span>
+</div>
+<div class="mt-2 w-full bg-surface-container-low h-1.5 rounded-full">
+<div class="bg-status-completed h-full rounded-full" id="stat-posted-progress" style="width: 0%;"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-border-subtle shadow-premium transition-all">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase mb-2">Pending This Month</p>
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md text-status-scheduled" id="stat-pending-month">0</h4>
+<span class="material-symbols-outlined text-status-scheduled" data-icon="pending">pending</span>
+</div>
+<div class="mt-2 w-full bg-surface-container-low h-1.5 rounded-full">
+<div class="bg-status-scheduled h-full rounded-full" id="stat-pending-progress" style="width: 0%;"></div>
+</div>
+</div>
+</div>
+<!-- Shop Summary Table Section -->
+<section class="bg-white rounded-xl border border-border-subtle shadow-premium overflow-hidden" style="transform: translateY(0px); box-shadow: rgba(0, 0, 0, 0.08) 0px 10px 30px -5px; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+<div class="px-6 py-5 border-b border-border-subtle flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Shop Summary</h3>
+<div class="flex space-x-2 relative">
+<button onclick="toggleSummaryFilter(event)" class="px-3 py-1.5 border border-border-subtle rounded-lg text-label-md font-label-md hover:bg-surface-container-low transition-all flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="filter_list">filter_list</span>
+                        Filter
+                    </button>
+<div id="summary-filter-dropdown" class="absolute right-24 top-10 w-44 bg-surface-container-lowest border border-border-subtle rounded-xl shadow-lg p-2 hidden z-50 animate-slide-up">
+  <button onclick="setSummaryFilter('all')" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low rounded-lg text-body-md text-text-primary font-medium">All Statuses</button>
+  <button onclick="setSummaryFilter('Active')" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low rounded-lg text-body-md text-status-completed font-medium">Active</button>
+  <button onclick="setSummaryFilter('Action Required')" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low rounded-lg text-body-md text-status-scheduled font-medium">Action Required</button>
+  <button onclick="setSummaryFilter('Overdue')" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low rounded-lg text-body-md text-status-missed font-medium">Overdue</button>
+</div>
+<button onclick="exportSummaryToPDF()" class="px-3 py-1.5 border border-border-subtle rounded-lg text-label-md font-label-md hover:bg-surface-container-low transition-all flex items-center">
+<span class="material-symbols-outlined text-sm mr-2" data-icon="download">download</span>
+                        Download PDF
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto max-h-[400px] custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Shop Name</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Total Posts</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Posted</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">Pending</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Last Post Date</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle" id="shop-summary-tbody">
+<!-- Dynamically populated shop rows -->
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-border-subtle bg-surface-container-lowest flex items-center justify-between">
+<p class="font-label-sm text-label-sm text-on-surface-variant" id="shop-summary-footer-text">Showing 0 shops</p>
+</div>
+</section>
+</main>
+
+<!-- Modal Overlay (Add New Shop) -->
+<div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-margin-mobile hidden" id="modal-overlay" style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+<!-- Modal Card -->
+<div class="bg-surface-container-lowest w-full max-w-[480px] rounded-xl shadow-[0px_10px_30px_-5px_rgba(0,0,0,0.08)] border border-border-subtle overflow-hidden animate-slide-up">
+<!-- Modal Header -->
+<div class="px-gutter py-5 flex items-center justify-between border-b border-border-subtle bg-surface-bright">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Add New Shop</h2>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Content (Form) -->
+<form class="p-gutter space-y-6" id="add-shop-form" onsubmit="handleFormSubmit(event)">
+<!-- Shop Name Field -->
+<div class="space-y-2">
+<label class="flex items-center justify-between font-label-md text-label-md text-on-surface-variant" for="shop-name">
+<span>Shop Name <span class="text-error">*</span></span>
+<span class="text-error text-[11px] hidden" id="name-error">Field required</span>
+</label>
+<div class="relative">
+<input class="w-full h-[48px] px-4 rounded-lg border border-border-subtle bg-white text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-outline/50" id="shop-name" placeholder="e.g. Downtown Store" required="" type="text"/>
+</div>
+</div>
+<!-- Description Field -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="description">
+                        Description <span class="text-outline font-normal">(Optional)</span>
+</label>
+<textarea class="w-full p-4 rounded-lg border border-border-subtle bg-white text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-outline/50 resize-none" id="description" placeholder="Describe the shop's focus and audience..." rows="3"></textarea>
+</div>
+<!-- Assigned Person Field -->
+<div class="space-y-2">
+<label class="flex items-center justify-between font-label-md text-label-md text-on-surface-variant" for="shop-assigned-person">
+<span>Assigned Person <span class="text-outline font-normal">(Optional)</span></span>
+</label>
+<div class="relative">
+<select class="w-full h-[48px] px-4 rounded-lg border border-border-subtle bg-white text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="shop-assigned-person">
+  <!-- Populated via JS -->
+</select>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-3 pt-4">
+<button class="flex-1 h-[44px] flex items-center justify-center font-label-md text-label-md text-on-surface-variant hover:bg-surface-container transition-colors rounded-lg border border-border-subtle" onclick="closeModal()" type="button">
+                        Cancel
+                    </button>
+<button class="flex-1 h-[44px] flex items-center justify-center font-label-md text-label-md bg-primary text-on-primary hover:bg-primary-container transition-all rounded-lg shadow-sm hover:shadow-md active:scale-95" type="submit">
+                        Save Shop
+                    </button>
+</div>
+</form>
+</div>
+</div>
+
+<!-- Success Toast Notification -->
+<div class="fixed top-6 right-6 z-[60] hidden" id="success-toast">
+<div class="toast-active bg-inverse-surface text-inverse-on-surface px-6 py-4 rounded-xl shadow-lg flex items-center gap-4 min-w-[320px] border border-outline-variant/20">
+<div class="w-8 h-8 rounded-full bg-status-completed flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">check</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Success!</p>
+<p class="text-[12px] opacity-80">Shop has been created successfully.</p>
+</div>
+<button class="ml-auto opacity-60 hover:opacity-100" onclick="hideToast()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+
+<script>
+  let editingShopId = null;
+  let activeSummaryFilter = "all";
+  let dashboardSearchQuery = "";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initial render
+    renderDashboard();
+    populateAssignedPersonDropdown();
+
+    // Bind search bar
+    const searchInput = document.querySelector('header input[type="text"]');
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        dashboardSearchQuery = e.target.value.toLowerCase();
+        renderDashboard();
+      });
+      // Focus animation
+      searchInput.addEventListener('focus', () => {
+        searchInput.parentElement.classList.add('w-[480px]');
+      });
+      searchInput.addEventListener('blur', () => {
+        searchInput.parentElement.classList.remove('w-[480px]');
+      });
+    }
+
+    // Register storage reload
+    window.addEventListener("api-data-refreshed", () => {
+      renderDashboard();
+      populateAssignedPersonDropdown();
+    });
+    window.addEventListener("api-local-change", () => {
+      renderDashboard();
+    });
+
+    API.forceSync().then(() => {
+      renderDashboard();
+      populateAssignedPersonDropdown();
+    });
+  });
+
+  function getActiveMonth(posts) {
+    const today = new Date();
+    const todayMonthStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0');
+    
+    // Check if we have posts in current month
+    const hasCurrentMonth = posts.some(p => p.postingDate && p.postingDate.startsWith(todayMonthStr));
+    if (hasCurrentMonth) return todayMonthStr;
+
+    // If the current month has no posts, show the sheet month with the most activity.
+    const months = {};
+    posts.forEach(p => {
+      if (p.postingDate) {
+        const m = p.postingDate.substring(0, 7);
+        months[m] = (months[m] || 0) + 1;
+      }
+    });
+
+    let bestMonth = todayMonthStr;
+    let max = 0;
+    for (let m in months) {
+      if (months[m] > max) {
+        max = months[m];
+        bestMonth = m;
+      }
+    }
+    return bestMonth;
+  }
+
+  function renderDashboard() {
+    const shops = API.getShops();
+    const posts = API.getPosts();
+
+    // 1. Calculate and render Stats
+    const activeMonth = getActiveMonth(posts);
+    const monthPosts = posts.filter(p => p.postingDate && p.postingDate.startsWith(activeMonth));
+    const totalMonth = monthPosts.length;
+    const postedMonth = monthPosts.filter(p => p.status === "Posted").length;
+    const pendingMonth = monthPosts.filter(p => p.status === "Pending").length;
+
+    document.getElementById("stat-shops").textContent = shops.length;
+    document.getElementById("stat-posts-month").textContent = totalMonth.toLocaleString();
+    document.getElementById("stat-posted-month").textContent = postedMonth.toLocaleString();
+    document.getElementById("stat-pending-month").textContent = pendingMonth.toLocaleString();
+
+    const postedPct = totalMonth > 0 ? Math.round((postedMonth / totalMonth) * 100) : 0;
+    const pendingPct = totalMonth > 0 ? Math.round((pendingMonth / totalMonth) * 100) : 0;
+
+    document.getElementById("stat-posted-progress").style.width = postedPct + "%";
+    document.getElementById("stat-pending-progress").style.width = pendingPct + "%";
+
+    // 2. Render Bento: Posts to be done Today (Posting Date = Today)
+    const todayStr = formatLocalDate(new Date());
+    const activeTodayPosts = posts.filter(p => p.postingDate === todayStr);
+
+    document.getElementById("today-posts-count").textContent = activeTodayPosts.length;
+    document.getElementById("today-posts-diff").textContent = `${activeTodayPosts.length} Scheduled`;
+
+    const todayList = document.getElementById("today-posts-list");
+    todayList.innerHTML = "";
+
+    if (activeTodayPosts.length === 0) {
+      todayList.innerHTML = `<p class="text-body-md text-text-secondary italic text-center py-4">No posts scheduled for today.</p>`;
+    } else {
+      activeTodayPosts.slice(0, 3).forEach(post => {
+        const item = document.createElement("div");
+        item.className = "bg-surface-container-low rounded-lg p-3 flex items-center justify-between group hover:bg-surface-container transition-colors cursor-pointer";
+        item.onclick = () => {
+          window.location.href = `shop_details_table.html?shop=${encodeURIComponent(post.shopName)}`;
+        };
+        item.innerHTML = `
+          <div class="flex items-center space-x-4">
+            <div class="w-2 h-8 bg-status-scheduled rounded-full"></div>
+            <div>
+              <p class="font-label-md text-label-md text-text-primary font-semibold truncate max-w-[200px]">${post.caption || post.title || 'Untitled'}</p>
+              <p class="font-label-sm text-label-sm text-text-secondary">${post.shopName} • ${post.category}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-label-md text-label-md text-primary">${post.postingTime || '-'}</p>
+            <span class="font-label-sm text-label-sm px-2 py-0.5 bg-white border border-border-subtle rounded-full">${post.platform}</span>
+          </div>
+        `;
+        todayList.appendChild(item);
+      });
+    }
+
+    // 3. Render Bento: Content to create Today (Posting Date = Tomorrow)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = formatLocalDate(tomorrow);
+    const activeTomorrowPosts = posts.filter(p => p.postingDate === tomorrowStr);
+
+    document.getElementById("tomorrow-posts-count").textContent = activeTomorrowPosts.length;
+    
+    const tomorrowList = document.getElementById("tomorrow-posts-list");
+    tomorrowList.innerHTML = "";
+
+    if (activeTomorrowPosts.length === 0) {
+      tomorrowList.innerHTML = `<p class="text-body-md text-text-secondary italic text-center py-4">No content needs creation for tomorrow.</p>`;
+    } else {
+      activeTomorrowPosts.slice(0, 2).forEach(post => {
+        const item = document.createElement("div");
+        item.className = "flex items-start space-x-3 p-3 rounded-lg border border-dashed border-outline-variant hover:border-secondary transition-colors cursor-pointer";
+        item.onclick = () => {
+          window.location.href = `shop_details_table.html?shop=${encodeURIComponent(post.shopName)}&editPostId=${post.id}`;
+        };
+        item.innerHTML = `
+          <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-outline">
+            <span class="material-symbols-outlined">image</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-label-md text-label-md text-text-primary font-semibold truncate">${post.caption || post.title || 'Untitled'}</p>
+            <p class="font-label-sm text-label-sm text-text-secondary">Shop: ${post.shopName} • ${post.category}</p>
+          </div>
+        `;
+        tomorrowList.appendChild(item);
+      });
+    }
+
+    // 4. Render Shop Summary Table
+    const tbody = document.getElementById("shop-summary-tbody");
+    tbody.innerHTML = "";
+
+    // Calculate details for each shop
+    let shopsData = shops.map(shop => {
+      const shopPosts = posts.filter(p => p.shopName === shop.name);
+      const posted = shopPosts.filter(p => p.status === "Posted").length;
+      const pending = shopPosts.filter(p => p.status === "Pending").length;
+      
+      // Determine Last Post Date
+      let lastPostDate = "N/A";
+      if (shopPosts.length > 0) {
+        const sorted = [...shopPosts].sort((a, b) => (b.postingDate || "").localeCompare(a.postingDate || ""));
+        lastPostDate = formatDate(sorted[0].postingDate);
+      }
+
+      // Determine Status
+      let status = "Active";
+      const hasOverdue = shopPosts.some(p => p.status === "Pending" && p.postingDate < todayStr);
+      const hasPending = shopPosts.some(p => p.status === "Pending");
+      
+      if (hasOverdue) {
+        status = "Overdue";
+      } else if (hasPending) {
+        status = "Action Required";
+      }
+
+      return {
+        ...shop,
+        totalPosts: shopPosts.length,
+        posted,
+        pending,
+        lastPostDate,
+        status
+      };
+    });
+
+    // Apply Search Query
+    if (dashboardSearchQuery) {
+      shopsData = shopsData.filter(s => 
+        s.name.toLowerCase().includes(dashboardSearchQuery) || 
+        (s.description && s.description.toLowerCase().includes(dashboardSearchQuery)) ||
+        (s.assignedPerson && s.assignedPerson.toLowerCase().includes(dashboardSearchQuery)) ||
+        s.status.toLowerCase().includes(dashboardSearchQuery) ||
+        String(s.totalPosts).includes(dashboardSearchQuery) ||
+        posts.some(p => p.shopName === s.name && [
+          p.title,
+          p.caption,
+          p.category,
+          p.platform,
+          p.status,
+          p.postingDate
+        ].some(value => String(value || "").toLowerCase().includes(dashboardSearchQuery)))
+      );
+    }
+
+    // Apply Filter
+    if (activeSummaryFilter !== "all") {
+      shopsData = shopsData.filter(s => s.status === activeSummaryFilter);
+    }
+
+    // Render Table Rows
+    if (shopsData.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="px-6 py-8 text-center text-on-surface-variant italic">No shops found matching filters.</td>
+        </tr>
+      `;
+    } else {
+      shopsData.forEach(shop => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-surface-container-lowest transition-colors group cursor-pointer";
+        tr.onclick = (e) => {
+          // Avoid row navigation click if clicking action buttons
+          if (e.target.closest("button")) return;
+          window.location.href = `shop_details_table.html?shop=${encodeURIComponent(shop.name)}`;
+        };
+
+        let statusClass = "bg-green-100 text-status-completed";
+        let statusDot = "bg-status-completed";
+        if (shop.status === "Action Required") {
+          statusClass = "bg-yellow-100 text-status-scheduled";
+          statusDot = "bg-status-scheduled";
+        } else if (shop.status === "Overdue") {
+          statusClass = "bg-red-100 text-status-missed";
+          statusDot = "bg-status-missed";
+        }
+
+        const letter = shop.name.charAt(0).toUpperCase();
+
+        tr.innerHTML = `
+          <td class="px-6 py-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary font-bold">${letter}</div>
+              <span class="font-body-md text-body-md text-text-primary font-semibold">${shop.name}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center font-body-md text-body-md">${shop.totalPosts}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="font-body-md text-body-md text-status-completed">${shop.posted}</span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="font-body-md text-body-md text-status-scheduled">${shop.pending}</span>
+          </td>
+          <td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">${shop.lastPostDate}</td>
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-label-sm ${statusClass}">
+              <span class="w-1.5 h-1.5 rounded-full ${statusDot} mr-1.5"></span>
+              ${shop.status}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="editShop('${shop.id}', event)" class="p-1 text-on-surface-variant hover:text-primary transition-colors" title="Edit Shop">
+                <span class="material-symbols-outlined text-sm">edit</span>
+              </button>
+              <button onclick="deleteShop('${shop.id}', event)" class="p-1 text-on-surface-variant hover:text-error transition-colors" title="Delete Shop">
+                <span class="material-symbols-outlined text-sm">delete</span>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("shop-summary-footer-text").textContent = `Showing ${shopsData.length} of ${shops.length} shops`;
+  }
+
+  function populateAssignedPersonDropdown() {
+    const dropdown = document.getElementById("shop-assigned-person");
+    if (!dropdown) return;
+
+    const members = API.getSettings().filter(s => s.type === "TeamMember");
+    dropdown.innerHTML = members.length > 0
+      ? '<option value="">-- No assigned person --</option>'
+      : '<option value="">No team members configured</option>';
+    members.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m.name;
+      opt.textContent = `${m.name} (${m.value1})`;
+      dropdown.appendChild(opt);
+    });
+  }
+
+  // Shop Modals CRUD
+  function openModal(shopId = null) {
+    editingShopId = shopId;
+    const modal = document.getElementById('modal-overlay');
+    const title = modal.querySelector("h2");
+    const form = document.getElementById("add-shop-form");
+    
+    // Clear warnings
+    document.getElementById("name-error").classList.add("hidden");
+
+    if (shopId) {
+      title.textContent = "Edit Shop";
+      const shop = API.getShops().find(s => s.id === shopId);
+      if (shop) {
+        document.getElementById("shop-name").value = shop.name;
+        document.getElementById("description").value = shop.description || "";
+        document.getElementById("shop-assigned-person").value = shop.assignedPerson || "";
+      }
+    } else {
+      title.textContent = "Add New Shop";
+      form.reset();
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+      modal.style.opacity = '1';
+      modal.style.pointerEvents = 'all';
+    }, 10);
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('modal-overlay');
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 150);
+  }
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('shop-name').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const assignedPerson = document.getElementById('shop-assigned-person').value;
+
+    if (!name) {
+      document.getElementById('name-error').classList.remove('hidden');
+      return;
+    }
+    document.getElementById('name-error').classList.add('hidden');
+
+    const shopData = {
+      name,
+      description,
+      assignedPerson
+    };
+
+    if (editingShopId) {
+      shopData.id = editingShopId;
+    }
+
+    closeModal();
+    const saved = await API.saveShop(shopData);
+    if (!saved) {
+      alert("Shop could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+      renderDashboard();
+      return;
+    }
+
+    showToast("Shop saved successfully.");
+    renderDashboard();
+  }
+
+  function editShop(id, event) {
+    event.stopPropagation();
+    openModal(id);
+  }
+
+  async function deleteShop(id, event) {
+    event.stopPropagation();
+    if (confirm("Are you sure you want to delete this shop? This will also remove all its posts!")) {
+      const deleted = await API.deleteShop(id);
+      if (!deleted) {
+        alert("Shop could not be deleted from Google Sheets. Please redeploy backend.gs and try again.");
+      }
+      renderDashboard();
+    }
+  }
+
+  // Filter & Export Actions
+  function toggleSummaryFilter(event) {
+    event.stopPropagation();
+    document.getElementById("summary-filter-dropdown").classList.toggle("hidden");
+  }
+
+  function setSummaryFilter(status) {
+    activeSummaryFilter = status;
+    document.getElementById("summary-filter-dropdown").classList.add("hidden");
+    renderDashboard();
+  }
+
+  // Close dropdown on click outside
+  document.addEventListener("click", () => {
+    const dd = document.getElementById("summary-filter-dropdown");
+    if (dd) dd.classList.add("hidden");
+  });
+
+  function exportSummaryToPDF() {
+    const shops = API.getShops();
+    const posts = API.getPosts();
+    const todayStr = formatLocalDate(new Date());
+
+    let rows = shops.map(shop => {
+      const shopPosts = posts.filter(p => p.shopName === shop.name);
+      const posted = shopPosts.filter(p => p.status === "Posted").length;
+      const pending = shopPosts.filter(p => p.status === "Pending").length;
+      
+      let status = "Active";
+      const hasOverdue = shopPosts.some(p => p.status === "Pending" && p.postingDate < todayStr);
+      const hasPending = shopPosts.some(p => p.status === "Pending");
+      if (hasOverdue) status = "Overdue";
+      else if (hasPending) status = "Action Required";
+
+      return {
+        name: shop.name,
+        description: shop.description || "",
+        assignedPerson: shop.assignedPerson || "",
+        assignedEmail: shop.assignedEmail || "",
+        totalPosts: shopPosts.length,
+        posted,
+        pending,
+        status
+      };
+    });
+
+    if (dashboardSearchQuery) {
+      rows = rows.filter(s => 
+        s.name.toLowerCase().includes(dashboardSearchQuery) || 
+        (s.description && s.description.toLowerCase().includes(dashboardSearchQuery)) ||
+        (s.assignedPerson && s.assignedPerson.toLowerCase().includes(dashboardSearchQuery)) ||
+        s.status.toLowerCase().includes(dashboardSearchQuery) ||
+        String(s.totalPosts).includes(dashboardSearchQuery) ||
+        posts.some(p => p.shopName === s.name && [
+          p.title,
+          p.caption,
+          p.category,
+          p.platform,
+          p.status,
+          p.postingDate
+        ].some(value => String(value || "").toLowerCase().includes(dashboardSearchQuery)))
+      );
+    }
+
+    if (activeSummaryFilter !== "all") {
+      rows = rows.filter(s => s.status === activeSummaryFilter);
+    }
+
+    downloadTablePDF({
+      filename: "shop_summary.pdf",
+      title: "Shop Summary",
+      subtitle: `Filtered table export - ${new Date().toLocaleString()}`,
+      columns: [
+        { label: "Shop Name", key: "name", width: 1.6 },
+        { label: "Description", key: "description", width: 2.2 },
+        { label: "Assigned Person", key: "assignedPerson", width: 1.4 },
+        { label: "Assigned Email", key: "assignedEmail", width: 1.6 },
+        { label: "Total Posts", key: "totalPosts", width: 0.8 },
+        { label: "Posted", key: "posted", width: 0.7 },
+        { label: "Pending", key: "pending", width: 0.7 },
+        { label: "Status", key: "status", width: 1.2 }
+      ],
+      rows
+    });
+  }
+
+  function showToast(message = "Shop saved successfully.") {
+    const toast = document.getElementById('success-toast');
+    const msg = toast.querySelector(".opacity-80");
+    if (msg) msg.textContent = message;
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      hideToast();
+    }, 4000);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById('success-toast');
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => {
+      toast.classList.add('hidden');
+      toast.style.opacity = '1';
+      toast.style.transform = 'none';
+    }, 300);
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr || dateStr === "N/A") return "N/A";
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parts[2];
+      return `${months[monthIndex]} ${day}, ${year}`;
+    }
+    return dateStr;
+  }
+
+  function formatLocalDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+</script>
+</body></html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reports Dashboard | Social Media Tracker</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js?v=20260616f"></script>
+    <script src="api.js?v=20260616k"></script>
+    <script src="auth.js?v=20260616d"></script>
+    <script src="shared.js?v=20260616m"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E6E9EF;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #D1D5DB;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed-dim": "#e0b6ff",
+                        "status-completed": "#00C875",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c276ff",
+                        "on-tertiary-fixed-variant": "#004f50",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#09006b",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2c24ce",
+                        "inverse-primary": "#c1c1ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#5df8f8",
+                        "tertiary": "#006969",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-fixed": "#002020",
+                        "primary-container": "#6161ff",
+                        "on-secondary-container": "#4c007d",
+                        "on-secondary-fixed": "#2e004e",
+                        "secondary": "#8337be",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#4745e5",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#f2daff",
+                        "outline-variant": "#c7c4d8",
+                        "text-secondary": "#676879",
+                        "status-missed": "#FF3D57",
+                        "border-subtle": "#E6E9EF",
+                        "surface-container-high": "#e7e8e9",
+                        "text-primary": "#333333",
+                        "tertiary-container": "#008484",
+                        "on-surface-variant": "#464555",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-fixed-dim": "#34dbdb",
+                        "on-primary": "#ffffff",
+                        "status-scheduled": "#FFCB00",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#767587",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "primary-fixed": "#e1dfff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#c1c1ff",
+                        "primary": "#4744e5",
+                        "on-secondary-fixed-variant": "#6915a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+    <!-- Sidebar Navigation -->
+    <aside class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-border-subtle dark:border-outline-variant flex flex-col py-unit z-50">
+        <div class="px-6 py-4 mb-4">
+            <h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary">Social Media Tracker</h1>
+            <p class="text-label-md font-label-md text-text-secondary opacity-70 hidden"></p>
+        </div>
+        <nav class="flex-grow space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="index.html">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="text-label-md font-label-md">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="shops.html">
+                <span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+                <span class="text-label-md font-label-md">Shops</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="shop_details_calendar.html">
+                <span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+                <span class="text-label-md font-label-md">Calendar</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-surface-container-low dark:bg-surface-container-highest" href="reports.html">
+                <span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                <span class="text-label-md font-label-md">Reports</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="settings.html">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="text-label-md font-label-md">Settings</span>
+            </a>
+        </nav>
+        <div class="mt-auto border-t border-border-subtle pt-4">
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span class="text-label-md font-label-md">Help</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span class="text-label-md font-label-md">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="ml-64 min-h-screen">
+        <!-- Top Navbar -->
+        <header class="sticky top-0 z-40 w-full bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-border-subtle dark:border-outline-variant flex justify-between items-center h-16 px-gutter">
+            <div class="flex items-center gap-4">
+                <h2 class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">Reports Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                    <img alt="User Avatar" class="w-full h-full object-cover" src=""/>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Canvas -->
+        <div class="p-gutter max-w-container-max mx-auto space-y-8">
+            <!-- Header Actions -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <h3 class="text-headline-md font-headline-md text-text-primary">Analytics & Performance Reports</h3>
+                    <p class="text-text-secondary text-body-md">Analyze publishing performance across all active storefronts and platforms.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Shop Filter Dropdown -->
+                    <div class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-xl min-w-[200px]">
+                        <span class="material-symbols-outlined text-outline" data-icon="storefront">storefront</span>
+                        <select id="reports-shop-filter" class="border-none focus:ring-0 bg-transparent text-label-md w-full cursor-pointer p-0">
+                            <option value="all">All Shops</option>
+                        </select>
+                    </div>
+                    <button onclick="exportReportPDF()" class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                        <span>Export PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary KPIs -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm">
+                    <p class="text-label-md font-label-md text-text-secondary mb-1">Total Scheduled</p>
+                    <h3 class="text-headline-md font-bold text-text-primary" id="kpi-total-posts">0</h3>
+                </div>
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm">
+                    <p class="text-label-md font-label-md text-status-completed mb-1">Total Posted</p>
+                    <h3 class="text-headline-md font-bold text-status-completed" id="kpi-posted-posts">0</h3>
+                </div>
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm">
+                    <p class="text-label-md font-label-md text-status-scheduled mb-1">Pending Approval</p>
+                    <h3 class="text-headline-md font-bold text-status-scheduled" id="kpi-pending-posts">0</h3>
+                </div>
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm">
+                    <p class="text-label-md font-label-md text-primary mb-1">Completion Rate</p>
+                    <h3 class="text-headline-md font-bold text-primary" id="kpi-completion-rate">0%</h3>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+                <!-- Chart 1: Shop-wise Performance -->
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm flex flex-col min-h-[380px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-text-primary text-body-lg">Shop-wise Performance</h4>
+                        <span class="text-label-sm text-text-secondary">Posts per storefront</span>
+                    </div>
+                    <div class="flex-grow relative h-64">
+                        <canvas id="chart-shop-performance"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Monthly Performance -->
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm flex flex-col min-h-[380px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-text-primary text-body-lg">Monthly Performance Trend</h4>
+                        <span class="text-label-sm text-text-secondary">Scheduled vs Posted</span>
+                    </div>
+                    <div class="flex-grow relative h-64">
+                        <canvas id="chart-monthly-trend"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Platform Breakdown -->
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm flex flex-col min-h-[380px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-text-primary text-body-lg">Social Channel Distribution</h4>
+                        <span class="text-label-sm text-text-secondary">By Platform</span>
+                    </div>
+                    <div class="flex-grow relative h-64">
+                        <canvas id="chart-platform-breakdown"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4: Category Breakdown -->
+                <div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm flex flex-col min-h-[380px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="font-bold text-text-primary text-body-lg">Content Type Breakdown</h4>
+                        <span class="text-label-sm text-text-secondary">By Category</span>
+                    </div>
+                    <div class="flex-grow relative h-64">
+                        <canvas id="chart-category-breakdown"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let postsData = [];
+        let shopsData = [];
+        let charts = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initReports();
+
+            // Refresh on sync events
+            window.addEventListener("api-data-refreshed", () => {
+                initReports();
+            });
+            window.addEventListener("api-local-change", () => {
+                loadDataAndRender();
+            });
+
+            document.getElementById("reports-shop-filter").addEventListener("change", () => {
+                renderAllCharts();
+            });
+
+            API.forceSync().then(() => {
+                initReports();
+            });
+        });
+
+        function initReports() {
+            shopsData = API.getShops();
+            const shopSelect = document.getElementById("reports-shop-filter");
+            const requestedShop = new URLSearchParams(window.location.search).get("shop");
+            shopSelect.innerHTML = `<option value="all">All Shops</option>`;
+            
+            shopsData.forEach(shop => {
+                const opt = document.createElement("option");
+                opt.value = shop.name;
+                opt.textContent = shop.name;
+                shopSelect.appendChild(opt);
+            });
+            if (requestedShop && ![...shopSelect.options].some(option => option.value === requestedShop)) {
+                const opt = document.createElement("option");
+                opt.value = requestedShop;
+                opt.textContent = requestedShop;
+                shopSelect.appendChild(opt);
+            }
+            if (requestedShop) {
+                shopSelect.value = requestedShop;
+            }
+
+            loadDataAndRender();
+        }
+
+        function loadDataAndRender() {
+            postsData = API.getPosts();
+            renderKPIs();
+            renderAllCharts();
+        }
+
+        function renderKPIs() {
+            const filterShop = document.getElementById("reports-shop-filter").value;
+            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+
+            const total = filteredPosts.length;
+            const posted = filteredPosts.filter(p => p.status === "Posted").length;
+            const pending = filteredPosts.filter(p => p.status === "Pending").length;
+            const rate = total > 0 ? Math.round((posted / total) * 100) : 0;
+
+            document.getElementById("kpi-total-posts").textContent = total;
+            document.getElementById("kpi-posted-posts").textContent = posted;
+            document.getElementById("kpi-pending-posts").textContent = pending;
+            document.getElementById("kpi-completion-rate").textContent = `${rate}%`;
+        }
+
+        function destroyCharts() {
+            Object.keys(charts).forEach(key => {
+                if (charts[key]) {
+                    charts[key].destroy();
+                }
+            });
+            charts = {};
+        }
+
+        function renderAllCharts() {
+            destroyCharts();
+            renderKPIs();
+
+            const filterShop = document.getElementById("reports-shop-filter").value;
+            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+
+            // Chart 1: Shop-wise Performance (Only makes sense when "All Shops" is active, or shows breakdown of categories for that shop)
+            renderShopPerformanceChart(filterShop);
+
+            // Chart 2: Monthly Trend
+            renderMonthlyTrendChart(filteredPosts);
+
+            // Chart 3: Platform Breakdown
+            renderPlatformBreakdownChart(filteredPosts);
+
+            // Chart 4: Category Breakdown
+            renderCategoryBreakdownChart(filteredPosts);
+        }
+
+        function renderShopPerformanceChart(selectedShop) {
+            const ctx = document.getElementById("chart-shop-performance").getContext("2d");
+            
+            let labels = [];
+            let postedData = [];
+            let pendingData = [];
+
+            if (selectedShop === "all") {
+                // Show all shops
+                shopsData.forEach(shop => {
+                    labels.push(shop.name);
+                    const shopPosts = postsData.filter(p => p.shopName === shop.name);
+                    postedData.push(shopPosts.filter(p => p.status === "Posted").length);
+                    pendingData.push(shopPosts.filter(p => p.status === "Pending").length);
+                });
+            } else {
+                // Show performance details by platforms that exist in sheet data.
+                labels = [...new Set(postsData.filter(p => p.shopName === selectedShop).map(p => p.platform).filter(Boolean))];
+                if (labels.length === 0) labels = ["No Data"];
+                labels.forEach(plat => {
+                    const platPosts = postsData.filter(p => p.shopName === selectedShop && p.platform === plat);
+                    postedData.push(platPosts.filter(p => p.status === "Posted").length);
+                    pendingData.push(platPosts.filter(p => p.status === "Pending").length);
+                });
+            }
+
+            charts.shopPerf = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Posted",
+                            data: postedData,
+                            backgroundColor: "#00C875",
+                            borderRadius: 6
+                        },
+                        {
+                            label: "Pending",
+                            data: pendingData,
+                            backgroundColor: "#FFCB00",
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, grid: { color: "#E6E9EF" }, ticks: { precision: 0 } }
+                    },
+                    plugins: {
+                        legend: { position: "bottom" }
+                    }
+                }
+            });
+        }
+
+        function renderMonthlyTrendChart(posts) {
+            const ctx = document.getElementById("chart-monthly-trend").getContext("2d");
+
+            // Extract months
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthCounts = {};
+
+            posts.forEach(p => {
+                if (p.postingDate) {
+                    const parts = p.postingDate.split("-");
+                    if (parts.length >= 2) {
+                        const key = `${parts[0]}-${parts[1]}`; // YYYY-MM
+                        if (!monthCounts[key]) {
+                            monthCounts[key] = { posted: 0, pending: 0 };
+                        }
+                        if (p.status === "Posted") monthCounts[key].posted++;
+                        else monthCounts[key].pending++;
+                    }
+                }
+            });
+
+            // Sort months ascending
+            const sortedKeys = Object.keys(monthCounts).sort();
+            const labels = sortedKeys.map(k => {
+                const parts = k.split("-");
+                return `${monthNames[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
+            });
+
+            const postedData = sortedKeys.map(k => monthCounts[k].posted);
+            const pendingData = sortedKeys.map(k => monthCounts[k].pending);
+
+            // Fallback if no posts
+            const finalLabels = labels.length > 0 ? labels : ["No Data"];
+            const finalPosted = postedData.length > 0 ? postedData : [0];
+            const finalPending = pendingData.length > 0 ? pendingData : [0];
+
+            charts.monthlyTrend = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: finalLabels,
+                    datasets: [
+                        {
+                            label: "Posted",
+                            data: finalPosted,
+                            backgroundColor: "#00C875",
+                            borderRadius: 6
+                        },
+                        {
+                            label: "Pending",
+                            data: finalPending,
+                            backgroundColor: "#FFCB00",
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: "#E6E9EF" }, ticks: { precision: 0 } }
+                    },
+                    plugins: {
+                        legend: { position: "bottom" }
+                    }
+                }
+            });
+        }
+
+        function renderPlatformBreakdownChart(posts) {
+            const ctx = document.getElementById("chart-platform-breakdown").getContext("2d");
+
+            const platforms = [...new Set(posts.map(p => p.platform).filter(Boolean))];
+            const finalPlatforms = platforms.length > 0 ? platforms : ["No Data"];
+            const counts = finalPlatforms.map(plat => {
+                return posts.filter(p => p.platform === plat).length;
+            });
+
+            // Harmonized Colors: Instagram Purple, TikTok Dark, Facebook Blue, YouTube Red
+            const bgColors = ["#8337be", "#191c1d", "#4744e5", "#FF3D57"];
+
+            charts.platform = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: finalPlatforms,
+                    datasets: [{
+                        label: "Posts Count",
+                        data: counts,
+                        backgroundColor: bgColors,
+                        borderRadius: 6,
+                        barThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bars
+                    scales: {
+                        x: { grid: { color: "#E6E9EF" }, ticks: { precision: 0 } },
+                        y: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderCategoryBreakdownChart(posts) {
+            const ctx = document.getElementById("chart-category-breakdown").getContext("2d");
+
+            // Categories list from Settings or existing sheet data.
+            const settings = API.getSettings();
+            const categories = settings.filter(s => s.type === "Category").map(s => s.name).filter(Boolean);
+            const sheetCategories = [...new Set(posts.map(p => p.category).filter(Boolean))];
+            const finalCats = categories.length > 0 ? categories : (sheetCategories.length > 0 ? sheetCategories : ["No Data"]);
+
+            const counts = finalCats.map(cat => {
+                return posts.filter(p => p.category === cat).length;
+            });
+
+            charts.category = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: finalCats,
+                    datasets: [{
+                        label: "Posts Count",
+                        data: counts,
+                        backgroundColor: ["#4744e5", "#8337be", "#006969", "#5df8f8"],
+                        borderRadius: 6,
+                        barThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: "#E6E9EF" }, ticks: { precision: 0 } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function exportReportPDF() {
+            const filterShop = document.getElementById("reports-shop-filter").value;
+            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+
+            downloadTablePDF({
+                filename: `reports_data_${filterShop}.pdf`,
+                title: "Reports Data",
+                subtitle: `${filterShop === "all" ? "All Shops" : filterShop} - ${new Date().toLocaleString()}`,
+                columns: [
+                    { label: "Post ID", key: "id", width: 1.6 },
+                    { label: "Shop Name", key: "shopName", width: 1.4 },
+                    { label: "Platform", key: "platform", width: 1 },
+                    { label: "Category", key: "category", width: 1.1 },
+                    { label: "Posting Date", key: "postingDate", width: 1 },
+                    { label: "Time", key: "postingTime", width: 0.8 },
+                    { label: "Status", key: "status", width: 0.8 },
+                    { label: "Assigned", key: "assignedPerson", width: 1.1 },
+                    { label: "Email", key: "assignedEmail", width: 1.5 }
+                ],
+                rows: filteredPosts
+            });
+        }
+    </script>
+</body>
+</html>

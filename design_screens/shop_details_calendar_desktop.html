@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shop Details - Calendar View | Kinetic Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface": "#f8f9fa",
+                    "surface-container-low": "#f3f4f5",
+                    "secondary-fixed-dim": "#e0b6ff",
+                    "status-completed": "#00C875",
+                    "surface-container": "#edeeef",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#c276ff",
+                    "on-tertiary-fixed-variant": "#004f50",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9fa",
+                    "on-primary-fixed": "#09006b",
+                    "surface-dim": "#d9dadb",
+                    "on-primary-fixed-variant": "#2c24ce",
+                    "inverse-primary": "#c1c1ff",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#5df8f8",
+                    "tertiary": "#006969",
+                    "inverse-surface": "#2e3132",
+                    "on-tertiary-fixed": "#002020",
+                    "primary-container": "#6161ff",
+                    "on-secondary-container": "#4c007d",
+                    "on-secondary-fixed": "#2e004e",
+                    "secondary": "#8337be",
+                    "on-tertiary-container": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#191c1d",
+                    "surface-tint": "#4745e5",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-fixed": "#f2daff",
+                    "outline-variant": "#c7c4d8",
+                    "text-secondary": "#676879",
+                    "status-missed": "#FF3D57",
+                    "border-subtle": "#E6E9EF",
+                    "surface-container-high": "#e7e8e9",
+                    "text-primary": "#333333",
+                    "tertiary-container": "#008484",
+                    "on-surface-variant": "#464555",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#ffffff",
+                    "tertiary-fixed-dim": "#34dbdb",
+                    "on-primary": "#ffffff",
+                    "status-scheduled": "#FFCB00",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#767587",
+                    "error-container": "#ffdad6",
+                    "background": "#f8f9fa",
+                    "on-background": "#191c1d",
+                    "primary-fixed": "#e1dfff",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed-dim": "#c1c1ff",
+                    "primary": "#4744e5",
+                    "on-secondary-fixed-variant": "#6915a5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: minmax(120px, auto);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation Rail -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-unit bg-surface border-r border-border-subtle z-50">
+<div class="px-gutter mb-8">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary">Kinetic</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Marketing Suite</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-low transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="font-label-md text-label-md">Shops</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-md text-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 mb-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:opacity-90 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Campaign
+            </button>
+</div>
+<div class="border-t border-border-subtle pt-4 px-4">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 w-full glass-header flex justify-between items-center h-16 px-gutter border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-md focus:ring-2 focus:ring-primary w-64 transition-all" placeholder="Search content..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="apps">apps</span>
+</div>
+<div class="flex items-center gap-3 border-l border-border-subtle pl-6">
+<div class="text-right">
+<p class="text-label-md font-bold text-on-surface">Alex Rivera</p>
+<p class="text-label-sm text-on-surface-variant">Admin</p>
+</div>
+<img alt="User Avatar" class="w-8 h-8 rounded-full bg-surface-container-high" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgIrg_6ovS_ZiXKbaQwRsbeRQCctgwfJYOgkA0EbN6kQnWvBGwPJBbv6SMBoYtM0X-7AC2nwxCFHQIbpCqe0rPnzSP0x4Tc3svepSHqlZ-qcP5fx_mTTOdL6eNPoZQ6q1OqNeUsY2uHKsWkE7B6_jzySqHcDKwncWLBU-3AVBKi4yVMvg9d9C7mu_p9uAItHbgNZPixCxes2thJBm1hS9Qy9S87PlHT03DrQkWAFMwvZbu43ufDVeksRGnBiZNgbA7K2r9lV42gA"/>
+</div>
+</div>
+</header>
+<!-- Page Header & View Toggles -->
+<section class="px-gutter py-8 max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant mb-2">
+<span>Shops</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary">Lumina Boutique</span>
+</nav>
+<h2 class="text-headline-lg font-headline-lg text-on-surface flex items-center gap-3">
+                        Lumina Boutique 
+                        <span class="bg-primary/10 text-primary text-label-sm px-3 py-1 rounded-full border border-primary/20">Active</span>
+</h2>
+</div>
+<div class="flex items-center gap-3 bg-surface-container p-1 rounded-xl">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-medium text-on-surface-variant hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="view_list">view_list</span>
+                        Table View
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-bold bg-surface-container-lowest text-primary shadow-sm transition-all">
+<span class="material-symbols-outlined" data-icon="calendar_view_month">calendar_view_month</span>
+                        Calendar View
+                    </button>
+<div class="h-6 w-[1px] bg-outline-variant mx-1"></div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg text-label-md font-bold bg-primary text-on-primary shadow-md hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="post_add">post_add</span>
+                        Add Post
+                    </button>
+</div>
+</div>
+<!-- Calendar Control Bar -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-t-2xl p-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">October 2023</h3>
+<div class="flex items-center bg-surface-container-low rounded-lg p-1">
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-3 py-1 text-label-md font-semibold hover:bg-surface-container-high rounded transition-colors">Today</button>
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-status-completed"></span> Completed</div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-status-scheduled"></span> Today</div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-primary"></span> Scheduled</div>
+<div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-status-missed"></span> Incomplete</div>
+</div>
+</div>
+</div>
+<!-- Main Calendar Grid -->
+<div class="bg-surface-container-lowest border-x border-b border-border-subtle rounded-b-2xl overflow-hidden shadow-sm">
+<!-- Day Labels -->
+<div class="grid grid-cols-7 bg-surface-container-low border-b border-border-subtle">
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Mon</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Tue</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Wed</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Thu</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Fri</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider border-r border-border-subtle/50">Sat</div>
+<div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Sun</div>
+</div>
+<!-- Days Grid -->
+<div class="calendar-grid">
+<!-- Week 1 -->
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">25</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">26</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">27</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">28</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">29</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle opacity-40">
+<span class="text-label-md">30</span>
+</div>
+<div class="p-3 border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-bold text-on-surface">1</span>
+<span class="material-symbols-outlined text-primary text-[18px] opacity-0 group-hover:opacity-100 transition-opacity" data-icon="add_circle">add_circle</span>
+</div>
+<div class="mt-2 flex flex-col gap-1">
+<span class="bg-status-completed/10 text-status-completed px-2 py-1 rounded text-label-sm border border-status-completed/20">3 Posts</span>
+</div>
+</div>
+<!-- Week 2 -->
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">2</span>
+<div class="mt-2 flex flex-col gap-1">
+<span class="bg-status-completed/10 text-status-completed px-2 py-1 rounded text-label-sm border border-status-completed/20">5 Posts</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">3</span>
+<div class="mt-2">
+<span class="bg-status-missed/10 text-status-missed px-2 py-1 rounded text-label-sm border border-status-missed/20">1 Incomplete</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">4</span>
+<div class="mt-2">
+<span class="bg-status-completed/10 text-status-completed px-2 py-1 rounded text-label-sm border border-status-completed/20">4 Posts</span>
+</div>
+</div>
+<!-- Today Marker -->
+<div class="p-3 border-r border-b border-border-subtle bg-status-scheduled/5 group hover:bg-status-scheduled/10 transition-colors cursor-pointer relative">
+<div class="absolute top-0 left-0 w-full h-1 bg-status-scheduled"></div>
+<span class="text-label-md font-extrabold text-on-surface">5</span>
+<div class="mt-2">
+<span class="bg-status-scheduled text-on-surface px-2 py-1 rounded text-label-sm font-bold">2 Posts</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">6</span>
+<div class="mt-2">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-label-sm border border-primary/20">3 Scheduled</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">7</span>
+</div>
+<div class="p-3 border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">8</span>
+</div>
+<!-- Week 3 (Future) -->
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">9</span>
+<div class="mt-2">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-label-sm border border-primary/20">2 Scheduled</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">10</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">11</span>
+<div class="mt-2">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-label-sm border border-primary/20">1 Scheduled</span>
+</div>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">12</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">13</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">14</span>
+</div>
+<div class="p-3 border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">15</span>
+</div>
+<!-- Week 4 -->
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">16</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">17</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">18</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">19</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">20</span>
+</div>
+<div class="p-3 border-r border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">21</span>
+</div>
+<div class="p-3 border-b border-border-subtle group hover:bg-surface-container transition-colors cursor-pointer">
+<span class="text-label-md font-bold text-on-surface">22</span>
+</div>
+</div>
+</div>
+<!-- Shop Quick Info Card -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest border border-border-subtle p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant">Scheduled for Oct</p>
+<p class="text-headline-sm font-bold text-on-surface">14 Posts</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-status-completed/10 flex items-center justify-center text-status-completed">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant">Success Rate</p>
+<p class="text-headline-sm font-bold text-on-surface">92.4%</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant">Audience Reach</p>
+<p class="text-headline-sm font-bold text-on-surface">12.5k</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="px-gutter py-8 mt-12 border-t border-border-subtle max-w-container-max mx-auto text-center">
+<p class="text-label-sm text-on-surface-variant">© 2023 Kinetic Enterprise Marketing Suite. All rights reserved.</p>
+</footer>
+</main>
+<!-- Modal Backdrop (Hidden by default, for demonstration of click implication) -->
+<div class="fixed inset-0 bg-on-surface/50 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center" id="modal-overlay">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-2xl p-8 transform scale-95 transition-transform duration-300">
+<div class="flex justify-between items-center mb-6">
+<h4 class="text-headline-sm font-bold">New Post for Oct 12</h4>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error" data-icon="close" onclick="toggleModal()">close</button>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-label-md mb-2">Content Platform</label>
+<select class="w-full bg-surface border-border-subtle rounded-xl focus:ring-primary">
+<option>Instagram Business</option>
+<option>Twitter / X</option>
+<option>LinkedIn Corporate</option>
+</select>
+</div>
+<div>
+<label class="block text-label-md mb-2">Caption</label>
+<textarea class="w-full bg-surface border-border-subtle rounded-xl h-32 focus:ring-primary" placeholder="Write something engaging..."></textarea>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold mt-4 shadow-lg active:scale-95 transition-all">Schedule Post</button>
+</div>
+</div>
+</div>
+<script>
+        function toggleModal() {
+            const modal = document.getElementById('modal-overlay');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('opacity-100');
+                    modal.children[0].classList.add('scale-100');
+                }, 10);
+            } else {
+                modal.classList.remove('opacity-100');
+                modal.children[0].classList.remove('scale-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Attach click listener to calendar cells
+        document.querySelectorAll('.calendar-grid > div:not(.opacity-40)').forEach(cell => {
+            cell.addEventListener('click', toggleModal);
+        });
+    </script>
+</body></html>

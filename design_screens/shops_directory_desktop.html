@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shops Directory | Kinetic Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed-dim": "#e0b6ff",
+                        "status-completed": "#00C875",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c276ff",
+                        "on-tertiary-fixed-variant": "#004f50",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#09006b",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2c24ce",
+                        "inverse-primary": "#c1c1ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#5df8f8",
+                        "tertiary": "#006969",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-fixed": "#002020",
+                        "primary-container": "#6161ff",
+                        "on-secondary-container": "#4c007d",
+                        "on-secondary-fixed": "#2e004e",
+                        "secondary": "#8337be",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#4745e5",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#f2daff",
+                        "outline-variant": "#c7c4d8",
+                        "text-secondary": "#676879",
+                        "status-missed": "#FF3D57",
+                        "border-subtle": "#E6E9EF",
+                        "surface-container-high": "#e7e8e9",
+                        "text-primary": "#333333",
+                        "tertiary-container": "#008484",
+                        "on-surface-variant": "#464555",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-fixed-dim": "#34dbdb",
+                        "on-primary": "#ffffff",
+                        "status-scheduled": "#FFCB00",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#767587",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "primary-fixed": "#e1dfff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#c1c1ff",
+                        "primary": "#4744e5",
+                        "on-secondary-fixed-variant": "#6915a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Side Navigation Rail -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-unit bg-surface dark:bg-inverse-surface border-r border-border-subtle dark:border-outline-variant z-50">
+<div class="px-gutter mb-8">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary tracking-tight">Kinetic Enterprise</h1>
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70">Marketing Suite</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-surface-container-low dark:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-label-md font-label-md">Shops</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="text-label-md font-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-6 border-t border-border-subtle dark:border-outline-variant">
+<button class="w-full py-3 bg-primary text-on-primary rounded-lg font-bold text-label-md hover:opacity-90 transition-all flex items-center justify-center gap-2 mb-6">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Campaign
+            </button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant text-label-md hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                    Help
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant text-label-md hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    Logout
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<div class="ml-64 min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 w-full h-16 glass-header bg-surface/80 dark:bg-inverse-surface/80 border-b border-border-subtle dark:border-outline-variant flex items-center justify-between px-gutter">
+<div class="flex items-center gap-gutter w-1/2">
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-inverse-on-surface">Social Tracker</span>
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface-container border border-border-subtle rounded-lg text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Search Shop" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-primary hover:bg-primary-container text-on-primary px-6 h-10 rounded-lg font-bold text-label-md flex items-center gap-2 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="store">store</span>
+                    Add New Shop
+                </button>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd7yCgtCwzo-i0GB3qPVpzPcBkEW_Cip7OEkpxppzxrKeVGSLA5r_lltTqVORxn8MtjTligYORZL239MfF-qSwSq85Flzo864bDeCufuo3fDfZi8x2uVoRLI2ft5KWbnRZ3IyI_m-8GWQEEYSCAbK5qQE3v145PwOfVFGiutZD_u1mNZrO_O8-XvhqJf0xsX1PAZ5SZAMf-K0eSFyjEKkfQcK37XVPhk5g9U9-hjL4iue2CFUfeeYuH-EG7cuITOGvUluwS8McqA"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin-desktop space-y-gutter">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-text-primary tracking-tight">Shops Directory</h2>
+<p class="text-body-md text-on-surface-variant mt-1">Manage and monitor all your connected store profiles across platforms.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg text-label-md text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-border-subtle rounded-lg text-label-md text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<!-- Bento-style Analytics Summary -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-gutter">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle hover:shadow-lg transition-shadow">
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Total Active Shops</p>
+<h3 class="text-headline-md font-headline-md text-primary">24</h3>
+<div class="mt-2 text-status-completed text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+                        +2 this month
+                    </div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Total Posts</p>
+<h3 class="text-headline-md font-headline-md text-primary">1,284</h3>
+<p class="text-label-sm text-on-surface-variant mt-2">Across all platforms</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Pending Approval</p>
+<h3 class="text-headline-md font-headline-md text-status-scheduled">12</h3>
+<p class="text-label-sm text-on-surface-variant mt-2">Requires attention</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-border-subtle">
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Live Campaigns</p>
+<h3 class="text-headline-md font-headline-md text-secondary">8</h3>
+<p class="text-label-sm text-on-surface-variant mt-2">Currently running</p>
+</div>
+</div>
+<!-- Shops Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-subtle overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-border-subtle">
+<th class="px-6 py-4 text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Shop Name</th>
+<th class="px-6 py-4 text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Total Posts</th>
+<th class="px-6 py-4 text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Posted</th>
+<th class="px-6 py-4 text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Pending</th>
+<th class="px-6 py-4 text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Shop 1 -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="px-6 py-5">
+<a class="flex items-center gap-4 group/link" href="/shop-details">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover/link:bg-primary group-hover/link:text-on-primary transition-all overflow-hidden border border-primary/20">
+<img alt="Nike Store" class="w-full h-full object-cover" data-alt="A professional, clean studio product shot of a minimalist logo for a high-end footwear retail brand, featuring sharp lines and vibrant corporate blue accents. The lighting is soft and diffuse, creating a premium light-mode aesthetic against a neutral light grey background. The style is modern, sophisticated, and polished, reflecting a high-performance marketing suite interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7P4UYenZTCLRGyHRE4DGla21KRzHM3N_nGBQXhFjX86jNlz7y5_xCDUck-I9vN8Scbg_uvCJBbQ6ABt9Ib6bGUy-pPo1Sqwh34Chb8Gi_wh4Jxh6Rel-UeHrbz1tOkmOz7kLTkb1HuWZe55tGoItI5szzbLsS4qjUU2MdYoyeTOvH6Dym4oEs_rU_qSBDVL0i2HFZf_MC36uMRKP0H9V6SyC-p6xf4sc1V7zSukI6bzwba3xJPkliCdGorXGUY-g3v4vZgalXIg"/>
+</div>
+<div>
+<div class="text-body-md font-semibold text-text-primary group-hover/link:text-primary transition-colors">Nike Flagship - NY</div>
+<div class="text-label-sm text-on-surface-variant font-normal">Connected via Shopify</div>
+</div>
+</a>
+</td>
+<td class="px-6 py-5 text-body-md font-medium text-text-primary">342</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-completed/10 text-status-completed">
+                                        310
+                                    </span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-scheduled/10 text-status-scheduled">
+                                        32
+                                    </span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all" title="Edit Shop">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all" title="Delete Shop">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Shop 2 -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="px-6 py-5">
+<a class="flex items-center gap-4 group/link" href="/shop-details">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover/link:bg-secondary group-hover/link:text-on-secondary transition-all overflow-hidden border border-secondary/20">
+<img alt="Tech Gadgets" class="w-full h-full object-cover" data-alt="A sleek and modern minimalist logo for a consumer electronics store, presented as a clean graphic element. The aesthetic is futuristic and technical, using deep purples and crisp whites to convey high-end quality. The image is bright with high-key lighting, fitting perfectly into a modern SaaS dashboard environment. The mood is efficient and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxjjUWBUE1FGn3oXCj4kbltw1j7o1ptwuv101gEkzgNtzm02V543Qdsp-qg8dPGqcsNCsgu2G0k4NDGeWhHyWGZxul5GUuSqilcIKgV3lgNGDCM5xnQ-7LengDdfy96BErylAi5SNt-5sOZANIQ6XX7X66PVz7s5f7bnCML8JZdCiaEmBO-ar7jetznGpQSC4WJNRtEwMRes1qDDjsbBad0t1XXlidx8cBhEEBps54OkE17JTHYxeN1a8bVvmHlkgnOTUF7L7MoA"/>
+</div>
+<div>
+<div class="text-body-md font-semibold text-text-primary group-hover/link:text-primary transition-colors">Urban Tech Hub</div>
+<div class="text-label-sm text-on-surface-variant font-normal">Connected via WooCommerce</div>
+</div>
+</a>
+</td>
+<td class="px-6 py-5 text-body-md font-medium text-text-primary">128</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-completed/10 text-status-completed">
+                                        120
+                                    </span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-scheduled/10 text-status-scheduled">
+                                        8
+                                    </span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Shop 3 -->
+<tr class="hover:bg-surface-container/30 transition-colors group border-b-0">
+<td class="px-6 py-5">
+<a class="flex items-center gap-4 group/link" href="/shop-details">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary group-hover/link:bg-tertiary group-hover/link:text-on-tertiary transition-all overflow-hidden border border-tertiary/20">
+<img alt="Home Decor" class="w-full h-full object-cover" data-alt="A chic and contemporary interior design brand logo characterized by elegant serif typography and muted teal accents. The visual style is airy, light, and high-end, evoking a sense of refined home aesthetics. The background is a soft, textured off-white, and the lighting is natural and bright, aligning with a corporate modern glassmorphic design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIqs8LcsytsePYXM09gd-RnzfyVmDvkUyLiafIWJeBsBT-mQzfCzorQEzVPfjQBbuib7cChUu6kCOfGi4V9KmLs8z77DdVW5mqxEivSyJGaa87zQkvDX490lhIlE4AYZ6JP20JUrXfw9S-SFb9J-JmWXfd9B7hZ03IR0O6-p76SUdTziw5hpA5RPdrU8iFVNdIsh8QxtwdmmKEd8UzmPQXgjcTwzFa1DsfgNSe_q3Az88g-jlXJxJOrhwsTRntrjfBB4LYs82lkA"/>
+</div>
+<div>
+<div class="text-body-md font-semibold text-text-primary group-hover/link:text-primary transition-colors">Nordic Home Interiors</div>
+<div class="text-label-sm text-on-surface-variant font-normal">Connected via Magento</div>
+</div>
+</a>
+</td>
+<td class="px-6 py-5 text-body-md font-medium text-text-primary">567</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-completed/10 text-status-completed">
+                                        542
+                                    </span>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-status-scheduled/10 text-status-scheduled">
+                                        25
+                                    </span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low border-t border-border-subtle flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">Showing 1 to 3 of 24 shops</span>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-border-subtle text-on-surface-variant hover:bg-surface-container transition-all disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-bold text-label-md">1</button>
+<button class="px-3 py-1.5 rounded-lg border border-border-subtle text-on-surface-variant hover:bg-surface-container transition-all">2</button>
+<button class="px-3 py-1.5 rounded-lg border border-border-subtle text-on-surface-variant hover:bg-surface-container transition-all">3</button>
+<button class="px-3 py-1.5 rounded-lg border border-border-subtle text-on-surface-variant hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual Help Footer -->
+<footer class="mt-auto px-margin-desktop py-6 text-center border-t border-border-subtle bg-surface">
+<p class="text-label-sm text-on-surface-variant opacity-60">© 2024 Kinetic Enterprise Marketing Suite. All rights reserved.</p>
+</footer>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Simple hover effect for table rows
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.style.transform = 'translateY(-1px)';
+                    row.style.boxShadow = '0 4px 12px rgba(0,0,0,0.03)';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.style.transform = 'none';
+                    row.style.boxShadow = 'none';
+                });
+            });
+
+            // Search bar interaction
+            const searchInput = document.querySelector('input[type="text"]');
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+            });
+        });
+    </script>
+</body></html>

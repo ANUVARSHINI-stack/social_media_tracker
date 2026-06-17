@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shop Details | Social Media Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="config.js?v=20260616f"></script>
+<script src="api.js?v=20260616k"></script>
+<script src="auth.js?v=20260616d"></script>
+<script src="shared.js?v=20260616m"></script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E6E9EF;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #D1D5DB;
+        }
+        .modal-overlay {
+            background: rgba(25, 28, 29, 0.4);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed-dim": "#e0b6ff",
+                        "status-completed": "#00C875",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c276ff",
+                        "on-tertiary-fixed-variant": "#004f50",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed": "#09006b",
+                        "surface-dim": "#d9dadb",
+                        "on-primary-fixed-variant": "#2c24ce",
+                        "inverse-primary": "#c1c1ff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#5df8f8",
+                        "tertiary": "#006969",
+                        "inverse-surface": "#2e3132",
+                        "on-tertiary-fixed": "#002020",
+                        "primary-container": "#6161ff",
+                        "on-secondary-container": "#4c007d",
+                        "on-secondary-fixed": "#2e004e",
+                        "secondary": "#8337be",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "surface-tint": "#4745e5",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed": "#f2daff",
+                        "outline-variant": "#c7c4d8",
+                        "text-secondary": "#676879",
+                        "status-missed": "#FF3D57",
+                        "border-subtle": "#E6E9EF",
+                        "surface-container-high": "#e7e8e9",
+                        "text-primary": "#333333",
+                        "tertiary-container": "#008484",
+                        "on-surface-variant": "#464555",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "tertiary-fixed-dim": "#34dbdb",
+                        "on-primary": "#ffffff",
+                        "status-scheduled": "#FFCB00",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#767587",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9fa",
+                        "on-background": "#191c1d",
+                        "primary-fixed": "#e1dfff",
+                        "surface-container-highest": "#e1e3e4",
+                        "primary-fixed-dim": "#c1c1ff",
+                        "primary": "#4744e5",
+                        "on-secondary-fixed-variant": "#6915a5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-border-subtle dark:border-outline-variant flex flex-col py-unit z-50">
+<div class="px-6 py-4 mb-4">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary dark:text-inverse-primary">Social Media Tracker</h1>
+<p class="text-label-md font-label-md text-text-secondary opacity-70 hidden"></p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="index.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-surface-container-low dark:bg-surface-container-highest" href="shops.html">
+<span class="material-symbols-outlined" data-icon="storefront">storefront</span>
+<span class="text-label-md font-label-md">Shops</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="shop_details_calendar.html">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="text-label-md font-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-inverse-surface transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-4 py-6">
+<button onclick="openAddModal()" class="w-full bg-primary hover:bg-primary/90 text-on-primary py-3 rounded-xl font-bold transition-all shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Campaign
+            </button>
+</div>
+<div class="mt-auto border-t border-border-subtle pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-label-md font-label-md">Help</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="text-label-md font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top Navbar -->
+<header class="sticky top-0 z-40 w-full bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-border-subtle dark:border-outline-variant flex justify-between items-center h-16 px-gutter">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-text-secondary">
+<span class="material-symbols-outlined text-lg" data-icon="storefront">storefront</span>
+<select id="header-shop-selector" class="border-none focus:ring-0 bg-transparent text-label-md font-semibold text-on-surface cursor-pointer p-0 pr-6">
+  <!-- populated dynamically -->
+</select>
+</div>
+</div>
+<div class="flex-1 max-w-md mx-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input id="header-search-input" class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/20 text-body-md transition-all" placeholder="Search across all shops..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgIrg_6ovS_ZiXKbaQwRsbeRQCctgwfJYOgkA0EbN6kQnWvBGwPJBbv6SMBoYtM0X-7AC2nwxCFHQIbpCqe0rPnzSP0x4Tc3svepSHqlZ-qcP5fx_mTTOdL6eNPoZQ6q1OqNeUsY2uHKsWkE7B6_jzySqHcDKwncWLBU-3AVBKi4yVMvg9d9C7mu_p9uAItHbgNZPixCxes2thJBm1hS9Qy9S87PlHT03DrQkWAFMwvZbu43ufDVeksRGnBiZNgbA7K2r9lV42gA"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-gutter max-w-container-max mx-auto">
+<!-- Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<h3 class="text-headline-md font-headline-md text-text-primary" id="page-title-shop-content">Shop Content</h3>
+<p class="text-text-secondary text-body-md">Manage and schedule posts for the current campaign cycle.</p>
+</div>
+<div class="flex items-center gap-4">
+<!-- Toggle Switch -->
+<div class="bg-surface-container-high p-1 rounded-xl flex">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface shadow-sm text-primary font-semibold transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="table_view">table_view</span>
+<span class="text-label-md">Table View</span>
+</button>
+<button onclick="goToCalendarView()" class="flex items-center gap-2 px-4 py-2 rounded-lg text-text-secondary hover:text-on-surface transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_month">calendar_month</span>
+<span class="text-label-md">Calendar View</span>
+</button>
+</div>
+<button onclick="openAddModal()" class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="post_add">post_add</span>
+                        Add Post
+                    </button>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-2xl p-4 mb-8 flex flex-wrap items-center gap-4 shadow-sm">
+<div class="flex-1 min-w-[240px] relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input id="table-search-input" class="w-full pl-10 pr-4 py-2 bg-white border border-border-subtle rounded-xl focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all text-body-md" placeholder="Search posts by caption..." type="text"/>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-xl min-w-[160px]">
+<span class="material-symbols-outlined text-outline" data-icon="filter_list">filter_list</span>
+<select id="table-category-filter" class="border-none focus:ring-0 bg-transparent text-label-md w-full cursor-pointer">
+<option>All Categories</option>
+</select>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-xl min-w-[180px]">
+<span class="material-symbols-outlined text-outline" data-icon="event">event</span>
+<select id="table-month-filter" class="border-none focus:ring-0 bg-transparent text-label-md w-full cursor-pointer">
+<option>All Months</option>
+</select>
+</div>
+<button onclick="exportTableToPDF()" class="p-2.5 text-text-secondary hover:bg-surface-container rounded-xl transition-colors" title="Export PDF">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+<!-- Table Card -->
+<div class="bg-white border border-border-subtle rounded-2xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-border-subtle">
+<tr>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Title</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Category</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Created</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary text-center">Assets</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Caption</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Posting Date</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary text-center">Posted</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary">Links</th>
+<th class="px-6 py-4 text-label-sm uppercase tracking-wider text-text-secondary text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle" id="posts-tbody">
+<!-- Rows populated dynamically by JS -->
+</tbody>
+</table>
+</div>
+<!-- Table Footer count -->
+<div class="px-6 py-4 border-t border-border-subtle flex items-center justify-between bg-surface-container-lowest">
+<span class="text-label-md text-text-secondary" id="table-footer-text">Showing 0 of 0 posts</span>
+</div>
+</div>
+<!-- Shop Info Bento Section -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-primary-container p-6 rounded-2xl text-on-primary-container relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="text-headline-sm font-bold mb-2">Campaign Performance</h4>
+<p class="text-body-md opacity-90 max-w-md">Performance insights update automatically from the posts stored in Google Sheets.</p>
+<button onclick="openShopReport()" class="mt-4 px-4 py-2 bg-white text-primary rounded-xl font-bold text-label-md shadow-sm">View Full Report</button>
+</div>
+<div class="absolute -right-10 -bottom-10 opacity-20 transform -rotate-12">
+<span class="material-symbols-outlined text-[160px]" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="bg-white border border-border-subtle p-6 rounded-2xl shadow-sm">
+<h4 class="text-label-sm uppercase tracking-widest text-text-secondary mb-4">Shop Quick Stats</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-body-md text-text-secondary">Total Posts</span>
+<span class="font-bold text-text-primary" id="quick-total-posts">0</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-body-md text-text-secondary">Scheduled</span>
+<span class="font-bold text-status-scheduled" id="quick-scheduled-posts">0</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<!-- Edit Post Modal Overlay (matches add_edit_post_modal_desktop.html exactly) -->
+<div id="edit-post-modal" class="fixed inset-0 z-50 flex items-start md:items-center justify-center bg-black/30 backdrop-blur-[2px] hidden overflow-y-auto p-4 py-6" style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+<!-- Modal Content -->
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-2xl border border-border-subtle overflow-hidden flex flex-col max-h-[calc(100vh-2rem)]">
+<!-- Modal Header -->
+<div class="px-gutter py-5 border-b border-border-subtle flex justify-between items-center bg-surface">
+<h2 class="text-headline-sm font-headline-sm text-on-surface" id="modal-title-header">Edit Post</h2>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors" onclick="closeEditModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="flex-1 overflow-y-auto px-gutter py-6 custom-scrollbar">
+<form class="space-y-6" id="edit-post-form" onsubmit="handlePostFormSubmit(event)">
+<!-- Title & Category Row -->
+<div class="grid gap-gutter grid-cols-1 md:grid-cols-3">
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Title</label>
+<input id="post-title" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text">
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Category</label>
+<div class="relative">
+<select id="post-category" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+<option>Promotional</option>
+<option>Lifestyle</option>
+<option>New Arrival</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Created Status</label>
+<div class="relative">
+<select id="post-created" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+</div>
+</div></div>
+<!-- Drive Link & Status -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Drive Link</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">link</span>
+<input id="post-drive-link" class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text">
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Posted Status</label>
+<div class="relative">
+<select id="post-status" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+<option value="pending">Pending</option>
+<option value="posted">Posted</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Caption Section -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Caption</label>
+<textarea id="post-caption" class="w-full p-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none resize-none" rows="4"></textarea>
+</div>
+<!-- Posting Date -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Posting Date</label>
+<div class="relative max-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">calendar_today</span>
+<input id="post-date" class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="date">
+</div>
+</div>
+<!-- Social Media Links -->
+<div class="space-y-3">
+<label class="block text-label-md font-label-md text-on-surface-variant">Social Media Links</label>
+<div class="space-y-3" id="social-links-container">
+<!-- populated by JS -->
+</div>
+<button onclick="addSocialLinkField()" class="flex items-center gap-2 text-primary font-label-md text-label-md hover:underline py-1" type="button">
+<span class="material-symbols-outlined text-body-lg">add</span>
+                            + Add Link
+                        </button>
+</div>
+</form>
+</div>
+<!-- Modal Footer -->
+<div class="px-gutter py-5 border-t border-border-subtle bg-surface-container-low flex justify-end gap-3">
+<button class="px-6 h-10 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors" onclick="closeEditModal()">
+                    Cancel
+                </button>
+<button onclick="document.getElementById('edit-post-form').requestSubmit()" class="px-6 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-md shadow-primary/20 transition-all active:scale-95">
+                    Save Changes
+                </button>
+</div>
+</div>
+</div>
+
+<script>
+        // Post Management Table Controller
+        let activeShopName = "";
+        let allPosts = [];
+        let editingPostId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initPage();
+
+            // Listen for cross-tab sync and local changes
+            window.addEventListener("api-data-refreshed", () => {
+                if (!activeShopName && API.getShops().length > 0) {
+                    initPage();
+                } else {
+                    populateCategories();
+                    refreshPlatformSelects();
+                    loadPosts();
+                }
+            });
+            window.addEventListener("api-local-change", () => {
+                populateCategories();
+                refreshPlatformSelects();
+                loadPosts();
+            });
+
+            // Bind filters and search inputs
+            document.getElementById("table-search-input").addEventListener("input", filterAndRender);
+            document.getElementById("table-category-filter").addEventListener("change", filterAndRender);
+            document.getElementById("table-month-filter").addEventListener("change", filterAndRender);
+            document.getElementById("header-search-input").addEventListener("input", (e) => {
+                document.getElementById("table-search-input").value = e.target.value;
+                filterAndRender();
+            });
+
+            API.forceSync().then(() => {
+                initPage();
+            });
+        });
+
+        function initPage() {
+            // 1. Load Shops and populate the top dropdown selector
+            const shops = API.getShops();
+            const selector = document.getElementById("header-shop-selector");
+            selector.innerHTML = "";
+
+            if (shops.length === 0) {
+                // If no shops exist, redirect or handle gracefully
+                selector.innerHTML = "<option>No Shops Available</option>";
+                activeShopName = "";
+            } else {
+                shops.forEach(shop => {
+                    const opt = document.createElement("option");
+                    opt.value = shop.name;
+                    opt.textContent = shop.name;
+                    selector.appendChild(opt);
+                });
+
+                // Get shop parameter from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const shopParam = urlParams.get("shop");
+                if (shopParam && shops.some(s => s.name === shopParam)) {
+                    activeShopName = shopParam;
+                } else {
+                    activeShopName = shops[0].name;
+                }
+                selector.value = activeShopName;
+            }
+
+            // Set page titles
+            document.getElementById("page-title-shop-content").textContent = `${activeShopName} Content`;
+            document.title = `${activeShopName} Details | Social Media Tracker`;
+
+            // Listen to selector changes to reload context
+            selector.onchange = (e) => {
+                const newShop = e.target.value;
+                window.location.search = `?shop=${encodeURIComponent(newShop)}`;
+            };
+
+            // Populate category filter and modal category options
+            populateCategories();
+
+            // Load and render posts
+            loadPosts();
+
+            // Check if there's an editPostId in the URL to auto-open the edit modal
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get("editPostId");
+            if (editId) {
+                // Wait slightly for DOM to settle and open modal
+                setTimeout(() => {
+                    openEditPostModal(editId);
+                }, 100);
+            }
+        }
+
+        function populateCategories() {
+            const settings = API.getSettings();
+            const categories = settings.filter(s => s.type === "Category").map(s => s.name).filter(Boolean);
+            const sheetCategories = [...new Set(API.getPosts().map(p => p.category).filter(Boolean))];
+            const finalCats = categories.length > 0 ? categories : sheetCategories;
+
+            // Filter select dropdown
+            const filterSelect = document.getElementById("table-category-filter");
+            filterSelect.innerHTML = "<option>All Categories</option>";
+            finalCats.forEach(cat => {
+                const opt = document.createElement("option");
+                opt.value = cat;
+                opt.textContent = cat;
+                filterSelect.appendChild(opt);
+            });
+
+            // Modal select dropdown
+            const modalSelect = document.getElementById("post-category");
+            modalSelect.innerHTML = "";
+            if (finalCats.length === 0) {
+                modalSelect.innerHTML = `<option value="">Add categories in Settings first</option>`;
+                return;
+            }
+            finalCats.forEach(cat => {
+                const opt = document.createElement("option");
+                opt.value = cat;
+                opt.textContent = cat;
+                modalSelect.appendChild(opt);
+            });
+        }
+
+        function getPlatformOptions() {
+            const settingsPlatforms = API.getSettings()
+                .filter(s => s.type === "Platform")
+                .map(s => s.name)
+                .filter(Boolean);
+            const sheetPlatforms = [...new Set(API.getPosts().map(p => p.platform).filter(Boolean))];
+            return settingsPlatforms.length > 0 ? settingsPlatforms : sheetPlatforms;
+        }
+
+        function escapeHTML(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function refreshPlatformSelects() {
+            const platforms = getPlatformOptions();
+            document.querySelectorAll("#social-links-container select").forEach(select => {
+                const current = select.value;
+                select.innerHTML = "";
+                if (platforms.length === 0) {
+                    select.innerHTML = `<option value="">No platforms</option>`;
+                    return;
+                }
+                platforms.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p;
+                    opt.textContent = p;
+                    select.appendChild(opt);
+                });
+                if (current && !platforms.includes(current)) {
+                    const opt = document.createElement("option");
+                    opt.value = current;
+                    opt.textContent = current;
+                    select.appendChild(opt);
+                }
+                select.value = current || platforms[0];
+            });
+        }
+
+        function loadPosts() {
+            allPosts = API.getPosts();
+            
+            // Build Month/Year Filter dynamically based on posts of this shop
+            populateMonthFilter();
+
+            // Render table
+            filterAndRender();
+        }
+
+        function populateMonthFilter() {
+            const shopPosts = allPosts.filter(p => p.shopName === activeShopName);
+            const monthSelect = document.getElementById("table-month-filter");
+            const previousVal = monthSelect.value;
+            
+            monthSelect.innerHTML = "<option>All Months</option>";
+
+            const months = [];
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            shopPosts.forEach(p => {
+                if (p.postingDate) {
+                    const parts = p.postingDate.split("-");
+                    if (parts.length >= 2) {
+                        const yr = parts[0];
+                        const mo = parseInt(parts[1], 10);
+                        const key = `${yr}-${parts[1]}`;
+                        const label = `${monthNames[mo - 1]} ${yr}`;
+                        if (!months.some(m => m.key === key)) {
+                            months.push({ key, label, year: parseInt(yr), month: mo });
+                        }
+                    }
+                }
+            });
+
+            // Sort months descending (newest months first)
+            months.sort((a, b) => b.year !== a.year ? b.year - a.year : b.month - a.month);
+
+            months.forEach(m => {
+                const opt = document.createElement("option");
+                opt.value = m.key;
+                opt.textContent = m.label;
+                monthSelect.appendChild(opt);
+            });
+
+            if ([...monthSelect.options].some(o => o.value === previousVal)) {
+                monthSelect.value = previousVal;
+            }
+        }
+
+        function filterAndRender() {
+            const searchQuery = document.getElementById("table-search-input").value.toLowerCase().trim();
+            const categoryFilter = document.getElementById("table-category-filter").value;
+            const monthFilter = document.getElementById("table-month-filter").value;
+
+            // Filter posts for this shop
+            const shopPosts = allPosts.filter(p => p.shopName === activeShopName);
+
+            // Filter matches
+            let filtered = shopPosts.filter(post => {
+                // Search filter (Caption or Title)
+                const captionText = (post.caption || "").toLowerCase();
+                const titleText = (post.title || "").toLowerCase();
+                const matchesSearch = !searchQuery || captionText.includes(searchQuery) || titleText.includes(searchQuery);
+
+                // Category filter
+                const matchesCategory = categoryFilter === "All Categories" || post.category === categoryFilter;
+
+                // Month filter
+                let matchesMonth = true;
+                if (monthFilter !== "All Months") {
+                    matchesMonth = post.postingDate && post.postingDate.startsWith(monthFilter);
+                }
+
+                return matchesSearch && matchesCategory && matchesMonth;
+            });
+
+            // Sort posts: older posts first, then newer posts appended below
+            filtered.sort((a, b) => {
+                const dateA = a.postingDate || "9999-12-31";
+                const dateB = b.postingDate || "9999-12-31";
+                if (dateA !== dateB) return dateA.localeCompare(dateB);
+                const timeA = a.postingTime || "00:00";
+                const timeB = b.postingTime || "00:00";
+                return timeA.localeCompare(timeB);
+            });
+
+            renderTableRows(filtered);
+            updateQuickStats(shopPosts);
+
+            // Update footer count
+            document.getElementById("table-footer-text").textContent = `Showing ${filtered.length} of ${shopPosts.length} posts`;
+        }
+
+        function getPlatformIconName(platform) {
+            if (!platform) return "share";
+            const plat = platform.toLowerCase();
+            if (plat.includes("insta") || plat.includes("ig")) return "photo_camera";
+            if (plat.includes("tok") || plat.includes("tt")) return "video_library";
+            if (plat.includes("face") || plat.includes("fb")) return "public";
+            if (plat.includes("you") || plat.includes("yt")) return "play_circle";
+            return "share";
+        }
+
+        function renderTableRows(posts) {
+            const tbody = document.getElementById("posts-tbody");
+            tbody.innerHTML = "";
+
+            if (posts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-6 py-8 text-center text-body-md text-text-secondary italic">
+                            No posts found matching the criteria.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            posts.forEach(post => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-surface transition-colors group";
+
+                let categoryClass = "px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-label-sm";
+                if (post.category === "Lifestyle") {
+                    categoryClass = "px-3 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-sm";
+                } else if (post.category === "New Arrival") {
+                    categoryClass = "px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed text-label-sm";
+                }
+
+                const displayTitle = post.title || (post.caption ? post.caption.substring(0, 25) : "Untitled Post");
+                const createdBadge = post.created === "yes" 
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-green-50 text-status-completed text-[11px] font-semibold">Yes</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full bg-surface-container-highest text-text-secondary text-[11px] font-semibold">No</span>`;
+
+                const isPosted = post.status === "Posted";
+                const toggleBackground = isPosted ? "bg-status-completed" : "bg-surface-container-highest";
+                const toggleTransform = isPosted ? "translateX(20px)" : "translateX(0)";
+
+                const assetLinkHTML = post.driveLink 
+                    ? `<a class="text-primary hover:scale-110 transition-transform inline-block" href="${post.driveLink}" target="_blank" title="Download Assets">
+                           <span class="material-symbols-outlined text-xl" data-icon="cloud_download">cloud_download</span>
+                       </a>`
+                    : `<span class="text-outline text-label-sm">-</span>`;
+
+                const linkIcon = getPlatformIconName(post.platform);
+                const platformLinkHTML = post.postUrl
+                    ? `<a href="${post.postUrl}" target="_blank" class="p-1.5 rounded-lg bg-surface-container text-text-secondary hover:text-primary transition-colors inline-flex items-center" title="Open ${post.platform}">
+                           <span class="material-symbols-outlined text-[16px]">${linkIcon}</span>
+                       </a>`
+                    : `<span class="text-outline text-label-sm">-</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center overflow-hidden">
+                                <span class="material-symbols-outlined text-primary text-xl">image</span>
+                            </div>
+                            <span class="font-semibold text-text-primary text-body-md truncate max-w-[180px]" title="${displayTitle}">${displayTitle}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="${categoryClass}">${post.category || "Post"}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-text-secondary text-body-md">
+                        ${createdBadge}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                        ${assetLinkHTML}
+                    </td>
+                    <td class="px-6 py-4 max-w-[240px]">
+                        <p class="text-body-md text-text-secondary line-clamp-1 italic" title="${post.caption || ''}">"${post.caption || ''}"</p>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-text-primary text-body-md font-medium">
+                        ${formatDate(post.postingDate)}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="inline-flex items-center cursor-pointer" onclick="togglePostStatus('${post.id}')">
+                            <div class="w-10 h-5 ${toggleBackground} rounded-full relative shadow-inner transition-colors duration-200">
+                                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200" style="transform: ${toggleTransform}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex gap-2">
+                            ${platformLinkHTML}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openEditPostModal('${post.id}')" class="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors" title="Edit Post">
+                                <span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+                            </button>
+                            <button onclick="deletePost('${post.id}')" class="p-2 hover:bg-error-container rounded-lg text-error transition-colors" title="Delete Post">
+                                <span class="material-symbols-outlined text-xl" data-icon="delete">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateQuickStats(shopPosts) {
+            // Update stats cards in UI
+            const total = shopPosts.length;
+            const scheduled = shopPosts.filter(p => p.status === "Pending").length;
+            
+            // Render text
+            const totalStatEl = document.getElementById("quick-total-posts") || document.querySelector('.mt-12 div:nth-child(2) div > div:nth-child(1) span:nth-child(2)');
+            if (totalStatEl) totalStatEl.textContent = total;
+
+            const scheduledStatEl = document.getElementById("quick-scheduled-posts") || document.querySelector('.mt-12 div:nth-child(2) div > div:nth-child(2) span:nth-child(2)');
+            if (scheduledStatEl) scheduledStatEl.textContent = scheduled;
+
+        }
+
+        async function togglePostStatus(id) {
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+
+            const previousStatus = post.status;
+            post.status = post.status === "Posted" ? "Pending" : "Posted";
+
+            const saved = await API.savePost(post);
+            if (!saved) {
+                post.status = previousStatus;
+                alert("Post status could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+            }
+            loadPosts();
+        }
+
+        function openEditPostModal(id) {
+            editingPostId = id;
+            const post = allPosts.find(p => p.id === id);
+            if (!post) return;
+
+            document.getElementById("modal-title-header").innerText = "Edit Post";
+            document.getElementById("post-title").value = post.title || "";
+            document.getElementById("post-category").value = post.category || "";
+            document.getElementById("post-created").value = post.created || "no";
+            document.getElementById("post-drive-link").value = post.driveLink || "";
+            document.getElementById("post-status").value = (post.status || "Pending").toLowerCase();
+            document.getElementById("post-caption").value = post.caption || "";
+            document.getElementById("post-date").value = post.postingDate || "";
+
+            // Populate links
+            const container = document.getElementById("social-links-container");
+            container.innerHTML = "";
+            createSocialLinkField(post.platform || "", post.postUrl || "");
+
+            showEditModal();
+        }
+
+        function openAddModal() {
+            editingPostId = null;
+            document.getElementById("modal-title-header").innerText = "Add Post";
+            document.getElementById("post-title").value = "";
+            document.getElementById("post-category").value = "";
+            document.getElementById("post-created").value = "no";
+            document.getElementById("post-drive-link").value = "";
+            document.getElementById("post-status").value = "pending";
+            document.getElementById("post-caption").value = "";
+            document.getElementById("post-date").value = formatLocalDate(new Date());
+
+            const defaultPlatform = getPlatformOptions()[0] || "";
+
+            const container = document.getElementById("social-links-container");
+            container.innerHTML = "";
+            createSocialLinkField(defaultPlatform, "");
+
+            showEditModal();
+        }
+
+        function createSocialLinkField(platform, value) {
+            const container = document.getElementById("social-links-container");
+            const div = document.createElement("div");
+            div.className = "flex items-center gap-2";
+
+            const plats = getPlatformOptions();
+            
+            let selectHTML = `<select class="post-platform-select border-none focus:ring-0 bg-transparent text-label-sm font-bold w-24 cursor-pointer">`;
+            if (plats.length === 0) {
+                selectHTML += `<option value="">No platforms</option>`;
+            }
+            plats.forEach(p => {
+                selectHTML += `<option value="${escapeHTML(p)}" ${p === platform ? 'selected' : ''}>${escapeHTML(p)}</option>`;
+            });
+            if (platform && !plats.includes(platform)) {
+                selectHTML += `<option value="${escapeHTML(platform)}" selected>${escapeHTML(platform)}</option>`;
+            }
+            selectHTML += `</select>`;
+
+            div.innerHTML = `
+                <div class="flex-1 relative flex items-center bg-surface-bright border border-border-subtle rounded-lg px-3 py-1">
+                    ${selectHTML}
+                    <input class="w-full h-8 border-none focus:ring-0 bg-transparent text-body-md outline-none" type="text" placeholder="Enter post URL..." value="${value}">
+                </div>
+                <button class="p-2 text-on-surface-variant hover:text-error transition-colors" type="button" onclick="this.parentElement.remove()">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            `;
+
+            // Auto status helper: if post URL input is filled, set status to posted
+            const urlInput = div.querySelector("input");
+            urlInput.addEventListener("input", function() {
+                if (this.value.trim() !== "") {
+                    document.getElementById("post-status").value = "posted";
+                }
+            });
+
+            container.appendChild(div);
+        }
+
+        function addSocialLinkField() {
+            const defaultPlatform = getPlatformOptions()[0] || "";
+            createSocialLinkField(defaultPlatform, "");
+        }
+
+        function showEditModal() {
+            const modal = document.getElementById("edit-post-modal");
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.style.opacity = "1";
+                modal.style.pointerEvents = "all";
+            }, 10);
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById("edit-post-modal");
+            modal.style.opacity = "0";
+            modal.style.pointerEvents = "none";
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 150);
+        }
+
+        async function handlePostFormSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById("post-title").value.trim();
+            const category = document.getElementById("post-category").value;
+            const created = document.getElementById("post-created").value;
+            const driveLink = document.getElementById("post-drive-link").value.trim();
+            const statusVal = document.getElementById("post-status").value; // 'pending' or 'posted'
+            const status = statusVal.charAt(0).toUpperCase() + statusVal.slice(1);
+            const caption = document.getElementById("post-caption").value.trim();
+            const date = document.getElementById("post-date").value;
+
+            // Extract single platform and post URL from first link field (database schema matching)
+            const linkDivs = document.querySelectorAll("#social-links-container > div");
+            let platform = "";
+            let postUrl = "";
+            if (linkDivs.length > 0) {
+                const firstDiv = linkDivs[0];
+                platform = firstDiv.querySelector("select").value;
+                postUrl = firstDiv.querySelector("input").value.trim();
+            }
+
+            // If URL is present, automatically override status to Posted
+            const finalStatus = postUrl ? "Posted" : status;
+
+            const postObj = {
+                shopName: activeShopName,
+                title,
+                category,
+                created,
+                driveLink,
+                status: finalStatus,
+                caption,
+                postingDate: date,
+                postingTime: "12:00",
+                platform,
+                postUrl
+            };
+
+            if (editingPostId) {
+                postObj.id = editingPostId;
+            }
+
+            closeEditModal();
+            const saved = await API.savePost(postObj);
+            if (!saved) {
+                alert("Post could not be saved to Google Sheets. Please redeploy backend.gs and try again.");
+                loadPosts();
+                return;
+            }
+            loadPosts();
+        }
+
+        async function deletePost(id) {
+            if (confirm("Are you sure you want to delete this post?")) {
+                const deleted = await API.deletePost(id);
+                if (!deleted) {
+                    alert("Post could not be deleted from Google Sheets. Please redeploy backend.gs and try again.");
+                }
+                loadPosts();
+            }
+        }
+
+        function goToCalendarView() {
+            window.location.href = `shop_details_calendar.html?shop=${encodeURIComponent(activeShopName)}`;
+        }
+
+        function openShopReport() {
+            const shopParam = activeShopName ? `?shop=${encodeURIComponent(activeShopName)}` : "";
+            window.location.href = `reports.html${shopParam}`;
+        }
+
+        function exportTableToPDF() {
+            const shopPosts = allPosts.filter(p => p.shopName === activeShopName);
+            downloadTablePDF({
+                filename: `${activeShopName.replace(/\s+/g, '_')}_posts.pdf`,
+                title: `${activeShopName} Posts`,
+                subtitle: `Table export - ${new Date().toLocaleString()}`,
+                columns: [
+                    { label: "Title", key: "title", width: 1.4 },
+                    { label: "Category", key: "category", width: 1 },
+                    { label: "Created", key: "createdLabel", width: 0.7 },
+                    { label: "Assets Link", key: "driveLink", width: 1.4 },
+                    { label: "Caption", key: "caption", width: 2.2 },
+                    { label: "Posting Date", key: "postingDate", width: 1 },
+                    { label: "Status", key: "status", width: 0.8 },
+                    { label: "Platform", key: "platform", width: 0.9 },
+                    { label: "Post URL", key: "postUrl", width: 1.4 }
+                ],
+                rows: shopPosts.map(p => ({
+                    title: p.title || (p.caption ? p.caption.substring(0, 25) : "Untitled Post"),
+                    category: p.category || "Post",
+                    createdLabel: p.created === "yes" ? "Yes" : "No",
+                    driveLink: p.driveLink || "",
+                    caption: p.caption || "",
+                    postingDate: p.postingDate || "",
+                    status: p.status || "Pending",
+                    platform: p.platform || "",
+                    postUrl: p.postUrl || ""
+                }))
+            });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const parts = dateStr.split("-");
+            if (parts.length === 3) {
+                const year = parts[0];
+                const monthIndex = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                return `${months[monthIndex]} ${day}, ${year}`;
+            }
+            return dateStr;
+        }
+
+        function formatLocalDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+    </script>
+</body></html>

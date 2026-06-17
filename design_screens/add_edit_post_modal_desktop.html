@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Edit Post - Kinetic Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#34dbdb",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#e1dfff",
+                      "inverse-surface": "#2e3132",
+                      "tertiary-container": "#008484",
+                      "on-background": "#191c1d",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#6915a5",
+                      "outline": "#767587",
+                      "on-secondary-container": "#4c007d",
+                      "on-surface-variant": "#464555",
+                      "on-surface": "#191c1d",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#e0b6ff",
+                      "on-error-container": "#93000a",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-primary-fixed-variant": "#2c24ce",
+                      "secondary-fixed": "#f2daff",
+                      "tertiary": "#006969",
+                      "status-missed": "#FF3D57",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f3f4f5",
+                      "inverse-primary": "#c1c1ff",
+                      "primary": "#4744e5",
+                      "background": "#f8f9fa",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c7c4d8",
+                      "text-primary": "#333333",
+                      "on-primary-container": "#ffffff",
+                      "secondary": "#8337be",
+                      "tertiary-fixed": "#5df8f8",
+                      "surface-variant": "#e1e3e4",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#e7e8e9",
+                      "on-tertiary-fixed": "#002020",
+                      "surface-bright": "#f8f9fa",
+                      "surface-container": "#edeeef",
+                      "on-secondary-fixed": "#2e004e",
+                      "text-secondary": "#676879",
+                      "surface-dim": "#d9dadb",
+                      "status-scheduled": "#FFCB00",
+                      "secondary-container": "#c276ff",
+                      "border-subtle": "#E6E9EF",
+                      "status-completed": "#00C875",
+                      "on-tertiary-container": "#ffffff",
+                      "surface": "#f8f9fa",
+                      "surface-tint": "#4745e5",
+                      "on-primary-fixed": "#09006b",
+                      "primary-container": "#6161ff",
+                      "on-tertiary-fixed-variant": "#004f50",
+                      "primary-fixed-dim": "#c1c1ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "display": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Background Layer: Blurred Shop Details Table -->
+<div class="fixed inset-0 z-0 flex blur-md scale-[1.02]">
+<!-- SideNavBar Rail Mock -->
+<aside class="h-screen w-64 bg-surface flex flex-col border-r border-border-subtle py-unit">
+<div class="px-gutter mb-8">
+<span class="text-headline-md font-headline-md font-extrabold text-primary">Kinetic Enterprise</span>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-low">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-label-md text-label-md">Shops</span>
+</div>
+</nav>
+</aside>
+<!-- Main Content Table Mock -->
+<main class="flex-1 overflow-hidden">
+<header class="flex justify-between items-center h-16 px-gutter bg-surface/80 border-b border-border-subtle">
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Shop Details</h1>
+</header>
+<div class="p-gutter">
+<div class="bg-surface border border-border-subtle rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-label-sm border-b border-border-subtle">
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Campaign Name</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Scheduled Date</th>
+<th class="px-6 py-4 font-semibold uppercase tracking-wider">Platform</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container">
+<td class="px-6 py-4 font-body-md text-body-md">Summer Collection Teaser</td>
+<td class="px-6 py-4"><span class="px-3 py-1 bg-status-scheduled/10 text-status-scheduled rounded-full text-label-sm">Pending</span></td>
+<td class="px-6 py-4 font-body-md text-body-md">Oct 28, 2023</td>
+<td class="px-6 py-4 font-body-md text-body-md">Instagram, TikTok</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[2px]">
+<!-- Modal Content -->
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-2xl border border-border-subtle overflow-hidden flex flex-col max-h-[921px]">
+<!-- Modal Header -->
+<div class="px-gutter py-5 border-b border-border-subtle flex justify-between items-center bg-surface">
+<h2 class="text-headline-sm font-headline-sm text-on-surface">Edit Post</h2>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="flex-1 overflow-y-auto px-gutter py-6 custom-scrollbar">
+<form class="space-y-6">
+<!-- Title & Category Row -->
+<div class="grid gap-gutter grid-cols-3">
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Title</label>
+<input class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text" value="Summer Collection Teaser">
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Category</label>
+<div class="relative">
+<select class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none appearance-none">
+<option>Post</option>
+<option selected="">Reel</option>
+<option>Story</option>
+<option>Carousel</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Created Status</label>
+<div class="relative">
+<select class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none appearance-none">
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div></div>
+<!-- Drive Link & Status -->
+<div class="grid grid-cols-2 gap-gutter">
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Drive Link</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">link</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text" value="google.drive.com/s/123">
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Posted Status</label>
+<div class="flex items-center h-10 px-3 bg-surface-container-low border border-border-subtle rounded-lg">
+<span class="w-2 h-2 rounded-full bg-status-scheduled mr-2"></span>
+<span class="text-body-md font-medium text-on-surface">Pending</span>
+</div>
+</div>
+</div>
+<!-- Caption Section -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Caption</label>
+<textarea class="w-full p-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none resize-none" rows="4">Sneak peek at our upcoming summer vibes...</textarea>
+</div>
+<!-- Posting Date -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Posting Date</label>
+<div class="relative max-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-lg">calendar_today</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="date" value="2023-10-28">
+</div>
+</div>
+<!-- Social Media Links -->
+<div class="space-y-3">
+<label class="block text-label-md font-label-md text-on-surface-variant">Social Media Links</label>
+<div class="space-y-3">
+<!-- Instagram -->
+<div class="flex items-center gap-2">
+<div class="flex-1 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-label-sm font-bold">IG</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text" value="instagram.com/p/summer_teaser">
+</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<!-- TikTok -->
+<div class="flex items-center gap-2">
+<div class="flex-1 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-label-sm font-bold">TT</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text" value="tiktok.com/@brand/video/987">
+</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" type="button">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-label-md text-label-md hover:underline py-1" type="button">
+<span class="material-symbols-outlined text-body-lg">add</span>
+                            + Add Link
+                        </button>
+</div>
+</form>
+</div>
+<!-- Modal Footer -->
+<div class="px-gutter py-5 border-t border-border-subtle bg-surface-container-low flex justify-end gap-3">
+<button class="px-6 h-10 rounded-lg text-on-surface-variant font-label-md text-label-md hover:bg-surface-container transition-colors">
+                    Cancel
+                </button>
+<button class="px-6 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container shadow-md shadow-primary/20 transition-all active:scale-95">
+                    Save Changes
+                </button>
+</div>
+</div>
+</div>
+<!-- Success Notification Toast -->
+
+<style>
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 3s ease-in-out infinite;
+        }
+    </style>
+<script>
+        // Simple micro-interaction for adding/removing link logic (mocked)
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                if(btn.innerText.includes('Add Link')) {
+                    console.log('Open add link dialog');
+                }
+            });
+        });
+
+        // Auto-hide toast after 8 seconds
+        setTimeout(() => {
+            const toast = document.getElementById('toast');
+            if(toast) {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease-out';
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 8000);
+    </script>
+
+
+</body></html>

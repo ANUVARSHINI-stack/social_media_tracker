@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Verification Suite</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.5; background: #f3f4f6; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        h1 { font-size: 1.5rem; margin-top: 0; color: #1f2937; }
+        .status { padding: 10px; border-radius: 4px; font-weight: bold; margin: 10px 0; }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+        pre { background: #f9fafb; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.875rem; border: 1px border border-gray-200; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Google Sheets API Verification</h1>
+        <div id="status" class="status">Initializing verification test...</div>
+        <p><strong>Response Code:</strong> <span id="code">-</span></p>
+        <p><strong>Details:</strong></p>
+        <pre id="output">Waiting for results...</pre>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwAIMCCbslUSxGEoN60IkA8WVCDmQaFkw1M6AR9tWTCXzF5bxcUr2WZ48exC9EKdKA7/exec";
+
+        async function verifyAPI() {
+            const statusEl = document.getElementById("status");
+            const codeEl = document.getElementById("code");
+            const outputEl = document.getElementById("output");
+
+            try {
+                statusEl.textContent = "Fetching data from Google Sheets...";
+                statusEl.className = "status";
+
+                const response = await fetch(`${API_URL}?action=readAll`, { method: "GET" });
+                codeEl.textContent = response.status;
+
+                if (!response.ok) {
+                    throw new Error(`Server returned HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                statusEl.textContent = "Google Sheets API connected successfully!";
+                statusEl.className = "status success";
+
+                outputEl.textContent = JSON.stringify({
+                    shopsCount: data.shops ? data.shops.length : 0,
+                    postsCount: data.posts ? data.posts.length : 0,
+                    settingsCount: data.settings ? data.settings.length : 0,
+                    logsCount: data.logs ? data.logs.length : 0
+                }, null, 2);
+
+                // Build Markdown report
+                let report = `# Google Sheets API Integration Test Report\n\n`;
+                report += `Executed on: ${new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC\n\n`;
+                report += `## 1. Connection Status\n`;
+                report += `- **API Endpoint:** \`${API_URL}\`\n`;
+                report += `- **HTTP Response:** \`${response.status} OK\`\n`;
+                report += `- **Status:** SUCCESS (Valid JSON Database Object Returned)\n\n`;
+                report += `## 2. Dynamic Database Statistics\n`;
+                report += `- **Storefronts (Shops) Count:** ${data.shops ? data.shops.length : 0}\n`;
+                report += `- **Scheduled Posts Count:** ${data.posts ? data.posts.length : 0}\n`;
+                report += `- **Configurations (Settings) Count:** ${data.settings ? data.settings.length : 0}\n`;
+                report += `- **Notifications Log Count:** ${data.logs ? data.logs.length : 0}\n\n`;
+                
+                report += `## 3. Sample Sheet Headers & Keys\n`;
+                if (data.shops && data.shops.length > 0) {
+                    report += `### Shops Columns:\n\`\`\`json\n${JSON.stringify(Object.keys(data.shops[0]), null, 2)}\n\`\`\`\n`;
+                }
+                if (data.posts && data.posts.length > 0) {
+                    report += `### Posts Columns:\n\`\`\`json\n${JSON.stringify(Object.keys(data.posts[0]), null, 2)}\n\`\`\`\n`;
+                }
+
+                // POST back to local server
+                statusEl.textContent = "Saving test report to workspace...";
+                const localResponse = await fetch("/save-test-report", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ report })
+                });
+
+                const localData = await localResponse.json();
+                if (localData.status === "success") {
+                    statusEl.textContent = "Google Sheets API verified & Test Report saved!";
+                } else {
+                    throw new Error("Failed to save report: " + localData.message);
+                }
+
+            } catch (err) {
+                statusEl.textContent = "Connection or Verification Failed";
+                statusEl.className = "status error";
+                codeEl.textContent = "Error";
+                outputEl.textContent = err.message + "\n\nIf you see a sign-in redirect block, make sure you are logged into your Google account in this browser window.";
+            }
+        }
+
+        window.onload = verifyAPI;
+    </script>
+</body>
+</html>
