@@ -177,6 +177,8 @@ const API = (() => {
       title: String(post.title || "").trim(),
       platform: String(post.platform || "").trim(),
       category: String(post.category || "").trim(),
+      description: String(post.description || "").trim(),
+      instruction: String(post.instruction || "").trim(),
       caption: String(post.caption || "").trim(),
       postingDate: normalizeDate(post.postingDate),
       postingTime: normalizeTime(post.postingTime),
@@ -461,7 +463,7 @@ const API = (() => {
     },
 
     getPosts() {
-      return cachedPosts.map(post => ({ ...post }));
+      return cachedPosts.map(post => ({ ...enrichPostAssignment(post) }));
     },
 
     async savePost(post) {

@@ -313,7 +313,7 @@ function formatSheetValue(value) {
 function ensureHeaders(sh, name) {
   var map = {
     "Shops": ["Shop ID", "Shop Name", "Description", "Assigned Person", "Assigned Email"],
-    "Posts": ["Post ID", "Shop Name", "Title", "Platform", "Category", "Created", "Assets Link", "Caption", "Posting Date", "Posting Time", "Status", "Assigned Person", "Assigned Email", "Post URL"],
+    "Posts": ["Post ID", "Shop Name", "Title", "Platform", "Category", "Created", "Description", "Instruction", "Assets Link", "Caption", "Posting Date", "Posting Time", "Status", "Assigned Person", "Assigned Email", "Post URL"],
     "Settings": ["Type", "Name", "Value1", "Value2", "Value3"],
     "Notifications Log": ["Log ID", "Timestamp", "Post ID", "Shop Name", "Assigned Email", "Status", "Action Taken"]
   }, need = map[name], current, merged = [], i;

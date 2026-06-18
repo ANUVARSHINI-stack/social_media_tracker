@@ -863,6 +863,21 @@ function hideViewerRestrictedNavigation() {
   });
 }
 
+function isViewerPostEditPage() {
+  const page = window.location.pathname.split("/").pop() || "index.html";
+  return page === "shop_details_table.html" || page === "shop_details_calendar.html";
+}
+
+function isViewerAllowedMutationControl(element) {
+  if (!isViewerPostEditPage()) return false;
+  const text = (element.textContent || "").trim();
+  const title = element.getAttribute("title") || "";
+  const onclick = element.getAttribute("onclick") || "";
+  return /edit post|^edit$|save changes/i.test(text) ||
+    /edit post|^edit$/i.test(title) ||
+    /openEditPostModal|requestSubmit/.test(onclick);
+}
+
 function disableViewerMutations() {
   const destructivePatterns = /(add|save|edit|delete|remove|post add|new role|new platform|new category)/i;
 
@@ -870,6 +885,7 @@ function disableViewerMutations() {
     const text = button.textContent.trim();
     const title = button.getAttribute("title") || "";
     const onclick = button.getAttribute("onclick") || "";
+    if (isViewerAllowedMutationControl(button)) return;
     if (destructivePatterns.test(text) || destructivePatterns.test(title) || destructivePatterns.test(onclick)) {
       button.remove();
     }
@@ -879,27 +895,34 @@ function disableViewerMutations() {
     const title = element.getAttribute("title") || "";
     const onclick = element.getAttribute("onclick") || "";
     const text = element.textContent.trim();
+    if (isViewerAllowedMutationControl(element)) return;
     if (destructivePatterns.test(text) || destructivePatterns.test(title) || destructivePatterns.test(onclick)) {
       if (element.tagName === "BUTTON" || element.tagName === "A" || element.classList.contains("material-symbols-outlined")) {
         const target = element.closest("button, a") || element;
+        if (isViewerAllowedMutationControl(target)) return;
         target.remove();
       }
     }
   });
 
-  document.querySelectorAll("th").forEach(th => {
-    if (th.textContent.trim().toLowerCase() === "actions") {
-      th.style.display = "none";
-    }
-  });
-  document.querySelectorAll("td").forEach(td => {
-    const actionGroup = td.querySelector("button");
-    if (actionGroup && td.parentElement && td.parentElement.children.length > 1) {
-      td.style.display = "none";
-    }
-  });
+  if (!isViewerPostEditPage()) {
+    document.querySelectorAll("th").forEach(th => {
+      if (th.textContent.trim().toLowerCase() === "actions") {
+        th.style.display = "none";
+      }
+    });
+    document.querySelectorAll("td").forEach(td => {
+      const actionGroup = td.querySelector("button");
+      if (actionGroup && td.parentElement && td.parentElement.children.length > 1) {
+        td.style.display = "none";
+      }
+    });
+  }
 
   document.querySelectorAll(".group-hover\\:opacity-100, .opacity-0.group-hover\\:opacity-100, .flex.items-center.justify-end.gap-2").forEach(group => {
+    if (isViewerPostEditPage() && group.querySelector('button[title="Edit Post"], button[title="Edit"]')) {
+      return;
+    }
     if (group.querySelector("button, a")) {
       group.remove();
     }

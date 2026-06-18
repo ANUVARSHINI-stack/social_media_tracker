@@ -6,12 +6,11 @@ const AUTH = (() => {
   const HASH_ITERATIONS = 120000;
   const BOOTSTRAP_PASSWORD = "ChangeMe123!";
 
-  function isReloadNavigation() {
-    const entries = performance.getEntriesByType ? performance.getEntriesByType("navigation") : [];
-    if (entries && entries[0] && entries[0].type) {
-      return entries[0].type === "reload";
-    }
-    return false;
+  function getLocalDateKey(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function normalizeRole(role) {
@@ -29,6 +28,10 @@ const AUTH = (() => {
       if (!raw) return null;
       const session = JSON.parse(raw);
       if (!session || !session.email) return null;
+      if (session.validForDate !== getLocalDateKey()) {
+        clearSession();
+        return null;
+      }
       return {
         ...session,
         role: normalizeRole(session.role),
@@ -44,7 +47,8 @@ const AUTH = (() => {
       name: String(user.name || "").trim(),
       email: String(user.email || "").trim(),
       role: normalizeRole(user.role),
-      access: roleAccess(user.role)
+      access: roleAccess(user.role),
+      validForDate: getLocalDateKey()
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     return session;
@@ -233,19 +237,15 @@ const AUTH = (() => {
     clearSession();
     if (window.API && API.clearGoogleProfile) API.clearGoogleProfile();
     const target = `${LOGIN_PAGE}?next=${encodeURIComponent(window.location.pathname.split("/").pop() || "index.html")}`;
-    window.location.href = target;
+    window.location.replace(target);
   }
 
   function redirectIfNeeded() {
     const page = window.location.pathname.split("/").pop() || "index.html";
-    if (page !== LOGIN_PAGE && isReloadNavigation()) {
-      clearSession();
-    }
-
     const session = getSession();
 
     if (page === LOGIN_PAGE) {
-      if (session && !isReloadNavigation()) {
+      if (session) {
         window.location.replace(session.access === "viewer" ? "index.html" : "index.html");
       }
       return;

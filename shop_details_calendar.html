@@ -413,8 +413,10 @@
 <label class="block text-label-md font-label-md text-on-surface-variant">Created Status</label>
 <div class="relative">
 <select id="post-created" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
-<option value="no">No</option>
-<option value="yes">Yes</option>
+<option value="Approved">Approved</option>
+<option value="Inprogress">Inprogress</option>
+<option value="Rework">Rework</option>
+<option value="Completed">Completed</option>
 </select>
 </div>
 </div></div>
@@ -439,6 +441,22 @@
 <div class="space-y-2">
 <label class="block text-label-md font-label-md text-on-surface-variant">Caption</label>
 <textarea id="post-caption" class="w-full p-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none resize-none" rows="4"></textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="space-y-2">
+<div class="flex items-center justify-between gap-3">
+<label class="block text-label-md font-label-md text-on-surface-variant">Description</label>
+<button type="button" onclick="copyReadonlyField('post-description')" class="text-primary text-label-sm font-semibold hover:underline">Copy</button>
+</div>
+<textarea id="post-description" class="w-full p-3 rounded-lg border border-border-subtle bg-surface-bright text-body-md outline-none resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="4"></textarea>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between gap-3">
+<label class="block text-label-md font-label-md text-on-surface-variant">Instruction</label>
+<button type="button" onclick="copyReadonlyField('post-instruction')" class="text-primary text-label-sm font-semibold hover:underline">Copy</button>
+</div>
+<textarea id="post-instruction" class="w-full p-3 rounded-lg border border-border-subtle bg-surface-bright text-body-md outline-none resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="4"></textarea>
+</div>
 </div>
 <div class="space-y-2">
 <label class="block text-label-md font-label-md text-on-surface-variant">Posting Date</label>
@@ -479,6 +497,100 @@
   let editingPostId = null;
   let editingPostShopName = "";
   let searchQuery = "";
+  const CREATED_STATUS_OPTIONS = ["Approved", "Inprogress", "Rework", "Completed"];
+
+  function isViewerPostEditor() {
+    return Boolean(window.AUTH && AUTH.getSession && AUTH.getSession() && AUTH.getSession().access === "viewer");
+  }
+
+  function normalizeCreatedStatus(value) {
+    const raw = String(value || "").trim();
+    if (!raw || raw.toLowerCase() === "no") return "Rework";
+    if (raw.toLowerCase() === "yes") return "Completed";
+    const matched = CREATED_STATUS_OPTIONS.find(option => option.toLowerCase() === raw.toLowerCase());
+    return matched || "Approved";
+  }
+
+  function applyViewerPostEditMode(post) {
+    const isViewer = isViewerPostEditor();
+    const createdField = document.getElementById('post-created');
+    const driveField = document.getElementById('post-drive-link');
+    const titleField = document.getElementById('post-title');
+    const categoryField = document.getElementById('post-category');
+    const captionField = document.getElementById('post-caption');
+    const dateField = document.getElementById('post-date');
+    const statusField = document.getElementById('post-status');
+    const descriptionField = document.getElementById('post-description');
+    const instructionField = document.getElementById('post-instruction');
+    const shopField = document.getElementById('post-shop');
+    const socialLinks = document.getElementById('social-links-container');
+    const addLinkButton = socialLinks ? socialLinks.parentElement.querySelector('button[type="button"]') : null;
+
+    [titleField, categoryField, captionField, dateField, statusField, shopField, descriptionField, instructionField].forEach(field => {
+      if (!field) return;
+      field.disabled = isViewer;
+      field.readOnly = isViewer;
+      field.classList.toggle('opacity-60', isViewer);
+    });
+
+    if (socialLinks) {
+      socialLinks.querySelectorAll('select, input, button').forEach(control => {
+        control.disabled = isViewer;
+      });
+      socialLinks.classList.toggle('opacity-60', isViewer);
+    }
+    if (addLinkButton) addLinkButton.classList.toggle('hidden', isViewer);
+    const saveButton = document.querySelector('#edit-post-modal button[onclick*="requestSubmit"]');
+    if (saveButton) saveButton.classList.toggle('hidden', isViewer && !post);
+
+    if (createdField) {
+      createdField.disabled = false;
+      createdField.classList.remove('opacity-60');
+    }
+    if (driveField) {
+      driveField.disabled = false;
+      driveField.classList.remove('opacity-60');
+    }
+  }
+
+  function canCurrentViewerEditPost(post) {
+    if (!isViewerPostEditor()) return true;
+    const session = AUTH.getSession ? AUTH.getSession() : null;
+    if (!session || !post) return false;
+    const sessionEmail = String(session.email || "").trim().toLowerCase();
+    const sessionName = String(session.name || "").trim().toLowerCase();
+    const shop = API.getShops().find(s => s.name === post.shopName) || {};
+    const assignedEmail = String(shop.assignedEmail || post.assignedEmail || "").trim().toLowerCase();
+    const assignedPerson = String(shop.assignedPerson || post.assignedPerson || "").trim().toLowerCase();
+    return Boolean(
+      (assignedEmail && assignedEmail === sessionEmail) ||
+      (assignedPerson && assignedPerson === sessionName)
+    );
+  }
+
+  function getPostDescriptionValue(post) {
+    return String(post.description || post.caption || "").trim();
+  }
+
+  function getPostInstructionValue(post) {
+    if (post.instruction) return String(post.instruction).trim();
+    const bits = [];
+    if (post.platform) bits.push(`Publish on ${post.platform}`);
+    if (post.postingDate) bits.push(`Scheduled for ${formatDate(post.postingDate)}`);
+    return bits.join(". ");
+  }
+
+  async function copyReadonlyField(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (!field) return;
+    field.focus();
+    field.select();
+    try {
+      await navigator.clipboard.writeText(field.value || "");
+    } catch (error) {
+      document.execCommand("copy");
+    }
+  }
 
   document.addEventListener("DOMContentLoaded", () => {
     // 1. Get Active Shop
@@ -993,6 +1105,7 @@
     posts.forEach((post) => {
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-surface-container-low transition-colors';
+        const canEditPost = canCurrentViewerEditPost(post);
         
         const statusPill = post.status === 'Posted' 
             ? `<span class="px-2.5 py-1 bg-status-completed/10 text-status-completed rounded-full text-xs font-semibold border border-status-completed/20">Published</span>`
@@ -1022,10 +1135,12 @@
             </td>
             <td class="py-4 px-4 text-right">
                 <div class="flex justify-end gap-2">
-                    <button onclick="openEditPostModal('${post.id}')" class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit"><span class="material-symbols-outlined text-sm">edit</span></button>
+                    ${canEditPost ? `<button onclick="openEditPostModal('${post.id}')" class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit"><span class="material-symbols-outlined text-sm">edit</span></button>` : ``}
+                    ${isViewerPostEditor() ? `` : `
                     <button onclick="deletePost('${post.id}')" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="Delete"><span class="material-symbols-outlined text-sm">delete</span></button>
                     <button onclick="togglePostStatus('${post.id}', 'Posted')" class="p-1.5 text-on-surface-variant hover:text-status-completed hover:bg-status-completed/10 rounded-lg transition-colors" title="Mark Published"><span class="material-symbols-outlined text-sm">check_circle</span></button>
                     <button onclick="togglePostStatus('${post.id}', 'Pending')" class="p-1.5 text-on-surface-variant hover:text-status-scheduled hover:bg-status-scheduled/10 rounded-lg transition-colors" title="Mark Scheduled"><span class="material-symbols-outlined text-sm">pending</span></button>
+                    `}
                 </div>
             </td>
         `;
@@ -1034,6 +1149,7 @@
   }
 
   async function togglePostStatus(id, newStatus) {
+    if (isViewerPostEditor()) return;
     const post = API.getPosts().find(p => p.id === id);
     if (post) {
       const previousStatus = post.status;
@@ -1065,15 +1181,18 @@
     editingPostId = id;
     const post = API.getPosts().find(p => p.id === id);
     if (!post) return;
+    if (!canCurrentViewerEditPost(post)) return;
     editingPostShopName = post.shopName || activeShopName;
 
     configurePostShopField(false, editingPostShopName);
     document.getElementById('post-modal-title').innerText = "Edit Post";
     document.getElementById('post-title').value = post.title || "";
     document.getElementById('post-category').value = post.category || "";
-    document.getElementById('post-created').value = post.created || "no";
+    document.getElementById('post-created').value = normalizeCreatedStatus(post.created);
     document.getElementById('post-drive-link').value = post.driveLink || "";
     document.getElementById('post-caption').value = post.caption || "";
+    document.getElementById('post-description').value = getPostDescriptionValue(post);
+    document.getElementById('post-instruction').value = getPostInstructionValue(post);
     document.getElementById('post-date').value = post.postingDate || "";
     document.getElementById('post-status').value = (post.status || "Pending").toLowerCase();
 
@@ -1082,6 +1201,7 @@
     container.innerHTML = '';
     createSocialLinkField(post.platform || '', post.postUrl || '');
 
+    applyViewerPostEditMode(post);
     closeDateDetails();
     showEditModal();
   }
@@ -1129,9 +1249,11 @@
     document.getElementById('post-modal-title').innerText = "Add Post";
     document.getElementById('post-title').value = "";
     document.getElementById('post-category').value = "";
-    document.getElementById('post-created').value = "no";
+    document.getElementById('post-created').value = "Approved";
     document.getElementById('post-drive-link').value = "";
     document.getElementById('post-caption').value = "";
+    document.getElementById('post-description').value = "";
+    document.getElementById('post-instruction').value = "";
     document.getElementById('post-date').value = dateStr;
     document.getElementById('post-status').value = "pending";
 
@@ -1141,6 +1263,7 @@
     const defaultPlatform = getPlatformOptions()[0] || "";
     createSocialLinkField(defaultPlatform, '');
 
+    applyViewerPostEditMode(null);
     closeDateDetails();
     showEditModal();
   }
@@ -1238,18 +1361,23 @@
       return;
     }
 
+    const existingPost = editingPostId ? API.getPosts().find(p => p.id === editingPostId) : null;
+    const viewerMode = isViewerPostEditor() && Boolean(existingPost);
+
     const postObj = {
       shopName: finalShopName,
-      title,
-      category,
-      created,
+      title: viewerMode ? (existingPost.title || "") : title,
+      category: viewerMode ? (existingPost.category || "") : category,
+      created: normalizeCreatedStatus(created),
+      description: viewerMode ? getPostDescriptionValue(existingPost) : document.getElementById('post-description').value.trim(),
+      instruction: viewerMode ? getPostInstructionValue(existingPost) : document.getElementById('post-instruction').value.trim(),
       driveLink,
-      caption,
-      postingDate: date,
-      postingTime: "12:00", // default time
-      status: finalStatus,
-      platform,
-      postUrl
+      caption: viewerMode ? (existingPost.caption || "") : caption,
+      postingDate: viewerMode ? (existingPost.postingDate || "") : date,
+      postingTime: viewerMode ? (existingPost.postingTime || "12:00") : "12:00",
+      status: viewerMode ? (existingPost.status || "Pending") : finalStatus,
+      platform: viewerMode ? (existingPost.platform || "") : platform,
+      postUrl: viewerMode ? (existingPost.postUrl || "") : postUrl
     };
 
     if (editingPostId) {
