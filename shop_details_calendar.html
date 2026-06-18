@@ -326,7 +326,7 @@
 <!-- Date Details Modal Overlay (matches calendar_date_details_desktop.html exactly) -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay overflow-y-auto hidden" id="date-details-modal" style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
 <!-- Post Details Modal Card -->
-<div class="w-full bg-white rounded-2xl shadow-[0px_20px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden max-w-4xl">
+<div class="w-full bg-white rounded-2xl shadow-[0px_20px_60px_-15px_rgba(0,0,0,0.15)] overflow-hidden max-w-5xl max-h-[calc(100vh-2rem)] flex flex-col">
 <!-- Modal Header -->
 <div class="px-8 pt-8 pb-6 flex justify-between items-start">
 <div>
@@ -341,7 +341,7 @@
 </button>
 </div>
 <!-- Modal Content (Posts List) -->
-<div class="px-8 pb-4"><div class="overflow-x-auto custom-scrollbar">
+<div class="px-8 pb-4 flex-1 overflow-y-auto"><div class="overflow-x-auto custom-scrollbar">
 <table class="w-full text-left border-collapse">
 <thead>
 <tr class="border-b border-border-subtle">
@@ -569,12 +569,15 @@
   }
 
   function getPostDescriptionValue(post) {
-    return String(post.description || post.caption || "").trim();
+    const shop = API.getShops().find(s => s.name === post.shopName) || {};
+    return String(post.description || post.caption || shop.description || "").trim();
   }
 
   function getPostInstructionValue(post) {
+    const shop = API.getShops().find(s => s.name === post.shopName) || {};
     if (post.instruction) return String(post.instruction).trim();
     const bits = [];
+    if (shop.name) bits.push(`Shop: ${shop.name}`);
     if (post.platform) bits.push(`Publish on ${post.platform}`);
     if (post.postingDate) bits.push(`Scheduled for ${formatDate(post.postingDate)}`);
     return bits.join(". ");
@@ -1123,10 +1126,10 @@
           : `<span class="text-on-surface-variant opacity-40">-</span>`;
 
         tr.innerHTML = `
-            <td class="py-4 px-4 text-body-md font-semibold text-on-surface max-w-[160px] truncate">${activeShopName === ALL_SHOPS_VALUE ? `${post.shopName} - ` : ""}${post.title || (post.caption ? post.caption.substring(0, 20) + (post.caption.length > 20 ? '...' : '') : post.category)}</td>
+            <td class="py-4 px-4 text-body-md font-semibold text-on-surface max-w-[220px] whitespace-normal break-words align-top">${activeShopName === ALL_SHOPS_VALUE ? `${post.shopName} - ` : ""}${post.title || post.caption || post.category}</td>
             <td class="py-4 px-4 text-body-md text-on-surface-variant">${post.category}</td>
             <td class="py-4 px-4">${driveLinkHTML}</td>
-            <td class="py-4 px-4 text-body-md text-on-surface-variant truncate max-w-[200px]" title="${post.caption || ''}">${post.caption || ''}</td>
+            <td class="py-4 px-4 text-body-md text-on-surface-variant max-w-[260px] whitespace-normal break-words align-top" title="${post.caption || ''}">${post.caption || ''}</td>
             <td class="py-4 px-4 text-body-md text-on-surface-variant whitespace-nowrap">${formatDate(post.postingDate)}</td>
             <td class="py-4 px-4">${statusPill}</td>
             <td class="py-4 px-4 flex items-center gap-1 mt-3">
