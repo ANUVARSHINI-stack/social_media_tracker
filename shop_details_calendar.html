@@ -570,7 +570,7 @@
 
   function getPostDescriptionValue(post) {
     const shop = API.getShops().find(s => s.name === post.shopName) || {};
-    return String(post.description || post.caption || shop.description || "").trim();
+    return String(post.description || post.caption || post.title || shop.description || "").trim();
   }
 
   function getPostInstructionValue(post) {
