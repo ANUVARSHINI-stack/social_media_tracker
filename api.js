@@ -404,6 +404,14 @@ const API = (() => {
     if (syncChannel) syncChannel.postMessage("refresh");
   }
 
+  function isDailyReminderEnabled() {
+    const notifSetting = cachedSettings.find(
+      setting => setting.type === "Notification" && setting.name === "Daily reminder email"
+    );
+    if (!notifSetting) return true;
+    return String(notifSetting.value1 || "").trim().toLowerCase() === "true";
+  }
+
   hydrateCache();
   setTimeout(syncFromRemote, 100);
 
@@ -475,7 +483,7 @@ const API = (() => {
         : [...cachedPosts, normalized];
 
       notifyLocalChange();
-      if (normalized.status !== "Posted" && (normalized.assignedEmail || normalized.assignedPerson)) {
+      if (isDailyReminderEnabled() && normalized.status !== "Posted" && (normalized.assignedEmail || normalized.assignedPerson)) {
         writeInBackground("savePost", { post: normalized }, () => {
           cachedPosts = previousPosts;
           notifyLocalChange();
@@ -627,6 +635,9 @@ const API = (() => {
     },
 
     async sendPendingNotificationsForMember(member) {
+      if (!isDailyReminderEnabled()) {
+        return { status: "success", sent: 0, skipped: true, message: "Daily reminder email is disabled." };
+      }
       const result = await remoteCall("sendPendingNotificationsForMember", {
         member: {
           name: String(member && member.name || "").trim(),

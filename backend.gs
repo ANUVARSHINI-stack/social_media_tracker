@@ -233,8 +233,10 @@ function sendPendingNotificationsForMember(member) {
   var members = member.members || readRows("Settings");
   var shopAssignments = buildShopAssignmentMap(shops, members);
   var pending = [], i, p, assignedName, assignedEmail, status, shopName, fallback;
+  var notificationsEnabled = isDailyReminderEnabled(members);
 
   if (!email) return { status: "success", sent: 0, message: "No email address provided." };
+  if (!notificationsEnabled && !member.force) return { status: "success", sent: 0, skipped: true, message: "Daily reminder email is disabled." };
 
   for (i = 0; i < posts.length; i++) {
     p = posts[i];
@@ -270,6 +272,16 @@ function sendPendingNotificationsForMember(member) {
   }
 
   return { status: "success", sent: pending.length };
+}
+function isDailyReminderEnabled(settings) {
+  var rows = settings || readRows("Settings"), i, s;
+  for (i = 0; i < rows.length; i++) {
+    s = rows[i];
+    if (String(s.type || "") === "Notification" && String(s.name || "") === "Daily reminder email") {
+      return String(s.value1 || "").toLowerCase() === "true";
+    }
+  }
+  return true;
 }
 function buildShopAssignmentMap(shops, members) {
   var memberEmails = {}, map = {}, i, m, s, assignedName, assignedEmail, shopName;
