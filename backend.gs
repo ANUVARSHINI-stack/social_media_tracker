@@ -212,6 +212,7 @@ function getNotificationDiagnostics() {
 function sendPendingNotifications() {
   var members = readRows("Settings"), posts = readRows("Posts"), shops = readRows("Shops");
   var sent = 0, groups = {}, i, member, email, name, result;
+  var forceSend = arguments.length > 0 && arguments[0] && arguments[0].force;
 
   for (i = 0; i < members.length; i++) {
     member = members[i];
@@ -219,7 +220,7 @@ function sendPendingNotifications() {
     name = String(member.name || "").trim();
     email = String(member.value1 || member.email || "").trim();
     if (!email || groups[email]) continue;
-    result = sendPendingNotificationsForMember({ name: name, email: email, posts: posts, shops: shops, members: members });
+    result = sendPendingNotificationsForMember({ name: name, email: email, posts: posts, shops: shops, members: members, force: forceSend });
     sent += Number(result.sent || 0);
     groups[email] = true;
   }

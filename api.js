@@ -652,7 +652,7 @@ const API = (() => {
     },
 
     async sendPendingNotifications() {
-      const result = await remoteCall("sendPendingNotifications");
+      const result = await remoteCall("sendPendingNotifications", { force: true });
       if (result) {
         await syncFromRemote();
         broadcastRefresh();
