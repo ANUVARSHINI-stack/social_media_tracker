@@ -493,10 +493,14 @@ const API = (() => {
         : [...cachedPosts, normalized];
 
       notifyLocalChange();
-      writeInBackground("savePost", { post: normalized }, () => {
+      const result = await remoteCall("savePost", { post: normalized });
+      if (!result) {
         cachedPosts = previousPosts;
         notifyLocalChange();
-      });
+        return null;
+      }
+      await syncFromRemote();
+      broadcastRefresh();
       return normalized;
     },
 

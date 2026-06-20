@@ -631,21 +631,11 @@
   }
 
   function getPostDescriptionValue(post) {
-    const saved = getStoredPostDescription(post);
-    if (saved) return saved;
-    const shop = API.getShops().find(s => s.name === post.shopName) || {};
-    return String(post.caption || post.title || shop.description || "").trim();
+    return getStoredPostDescription(post);
   }
 
   function getPostInstructionValue(post) {
-    const saved = getStoredPostInstruction(post);
-    if (saved) return saved;
-    const shop = API.getShops().find(s => s.name === post.shopName) || {};
-    const bits = [];
-    if (shop.name) bits.push(`Shop: ${shop.name}`);
-    if (post.platform) bits.push(`Publish on ${post.platform}`);
-    if (post.postingDate) bits.push(`Scheduled for ${formatDate(post.postingDate)}`);
-    return bits.join(". ");
+    return getStoredPostInstruction(post);
   }
 
   async function copyReadonlyField(fieldId) {
