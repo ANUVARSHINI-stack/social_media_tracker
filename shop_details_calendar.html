@@ -392,7 +392,7 @@
 <option value="">Select shop</option>
 </select>
 </div>
-<div class="grid gap-gutter grid-cols-1 md:grid-cols-3">
+<div class="grid gap-gutter grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
 <div class="space-y-2">
 <label class="block text-label-md font-label-md text-on-surface-variant">Title</label>
 <input id="post-title" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text">
@@ -419,7 +419,16 @@
 <option value="Completed">Completed</option>
 </select>
 </div>
-</div></div>
+</div>
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Assigned Person</label>
+<div class="relative">
+<select id="post-assigned-person" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+<option value="">Unassigned</option>
+</select>
+</div>
+</div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
 <div class="space-y-2">
 <label class="block text-label-md font-label-md text-on-surface-variant">Drive Link</label>
@@ -520,13 +529,14 @@
     const captionField = document.getElementById('post-caption');
     const dateField = document.getElementById('post-date');
     const statusField = document.getElementById('post-status');
+    const assignedField = document.getElementById('post-assigned-person');
     const descriptionField = document.getElementById('post-description');
     const instructionField = document.getElementById('post-instruction');
     const shopField = document.getElementById('post-shop');
     const socialLinks = document.getElementById('social-links-container');
     const addLinkButton = socialLinks ? socialLinks.parentElement.querySelector('button[type="button"]') : null;
 
-    [titleField, categoryField, captionField, dateField, statusField, shopField, descriptionField, instructionField].forEach(field => {
+    [titleField, categoryField, captionField, dateField, statusField, assignedField, shopField, descriptionField, instructionField].forEach(field => {
       if (!field) return;
       field.disabled = isViewer;
       field.readOnly = isViewer;
@@ -560,12 +570,56 @@
     const sessionEmail = String(session.email || "").trim().toLowerCase();
     const sessionName = String(session.name || "").trim().toLowerCase();
     const shop = API.getShops().find(s => s.name === post.shopName) || {};
-    const assignedEmail = String(shop.assignedEmail || post.assignedEmail || "").trim().toLowerCase();
-    const assignedPerson = String(shop.assignedPerson || post.assignedPerson || "").trim().toLowerCase();
+    const assignedEmail = String(post.assignedEmail || shop.assignedEmail || "").trim().toLowerCase();
+    const assignedPerson = String(post.assignedPerson || shop.assignedPerson || "").trim().toLowerCase();
     return Boolean(
       (assignedEmail && assignedEmail === sessionEmail) ||
       (assignedPerson && assignedPerson === sessionName)
     );
+  }
+
+  function getTeamMemberOptions() {
+    return API.getSettings()
+      .filter(setting => setting.type === "TeamMember" && setting.name)
+      .map(setting => ({
+        name: String(setting.name || "").trim(),
+        email: String(setting.value1 || "").trim()
+      }))
+      .filter(member => member.name);
+  }
+
+  function resolveAssignedPersonEmail(name) {
+    const target = String(name || "").trim();
+    if (!target) return "";
+    const member = getTeamMemberOptions().find(option => option.name === target);
+    return member ? member.email : "";
+  }
+
+  function populateAssignedPersonOptions(selectedName = "", shopName = "") {
+    const field = document.getElementById('post-assigned-person');
+    if (!field) return;
+
+    const shop = API.getShops().find(item => item.name === shopName) || {};
+    const fallbackName = String(shop.assignedPerson || "").trim();
+    const finalSelectedName = String(selectedName || fallbackName || "").trim();
+    const members = getTeamMemberOptions();
+
+    field.innerHTML = `<option value="">Unassigned</option>`;
+    members.forEach(member => {
+      const option = document.createElement('option');
+      option.value = member.name;
+      option.textContent = member.email ? `${member.name} (${member.email})` : member.name;
+      field.appendChild(option);
+    });
+
+    if (finalSelectedName && !members.some(member => member.name === finalSelectedName)) {
+      const option = document.createElement('option');
+      option.value = finalSelectedName;
+      option.textContent = finalSelectedName;
+      field.appendChild(option);
+    }
+
+    field.value = finalSelectedName;
   }
 
   function getPostDescriptionValue(post) {
@@ -1198,6 +1252,7 @@
     document.getElementById('post-instruction').value = getPostInstructionValue(post);
     document.getElementById('post-date').value = post.postingDate || "";
     document.getElementById('post-status').value = (post.status || "Pending").toLowerCase();
+    populateAssignedPersonOptions(post.assignedPerson || "", editingPostShopName);
 
     // Populate links
     const container = document.getElementById('social-links-container');
@@ -1233,6 +1288,14 @@
 
     field.classList.toggle('hidden', !shouldShow);
     select.required = shouldShow;
+    select.onchange = () => {
+      if (!editingPostId) {
+        populateAssignedPersonOptions("", select.value || "");
+      }
+    };
+    if (!editingPostId) {
+      populateAssignedPersonOptions("", select.value || selectedShopName || "");
+    }
   }
 
   function openAddModalDirect() {
@@ -1259,6 +1322,7 @@
     document.getElementById('post-instruction').value = "";
     document.getElementById('post-date').value = dateStr;
     document.getElementById('post-status').value = "pending";
+    populateAssignedPersonOptions("", addingFromAllShops ? (document.getElementById('post-shop')?.value || "") : activeShopName);
 
     const container = document.getElementById('social-links-container');
     container.innerHTML = '';
@@ -1366,6 +1430,9 @@
 
     const existingPost = editingPostId ? API.getPosts().find(p => p.id === editingPostId) : null;
     const viewerMode = isViewerPostEditor() && Boolean(existingPost);
+    const assignedPerson = viewerMode
+      ? String(existingPost.assignedPerson || "").trim()
+      : String(document.getElementById('post-assigned-person').value || "").trim();
 
     const postObj = {
       shopName: finalShopName,
@@ -1380,7 +1447,9 @@
       postingTime: viewerMode ? (existingPost.postingTime || "12:00") : "12:00",
       status: viewerMode ? (existingPost.status || "Pending") : finalStatus,
       platform: viewerMode ? (existingPost.platform || "") : platform,
-      postUrl: viewerMode ? (existingPost.postUrl || "") : postUrl
+      postUrl: viewerMode ? (existingPost.postUrl || "") : postUrl,
+      assignedPerson,
+      assignedEmail: assignedPerson ? resolveAssignedPersonEmail(assignedPerson) : ""
     };
 
     if (editingPostId) {
