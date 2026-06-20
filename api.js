@@ -440,14 +440,24 @@ const API = (() => {
     async saveShop(shop) {
       const normalized = enrichShopAssignment(normalizeShop(shop));
       const previousShops = cachedShops;
+      const previousPosts = cachedPosts;
       const index = cachedShops.findIndex(s => s.id === normalized.id);
       cachedShops = index > -1
         ? cachedShops.map((s, i) => i === index ? { ...s, ...normalized } : s)
         : [...cachedShops, normalized];
+      cachedPosts = cachedPosts.map(post => {
+        if (post.shopName !== normalized.name) return post;
+        return {
+          ...post,
+          assignedPerson: normalized.assignedPerson || "",
+          assignedEmail: normalized.assignedEmail || ""
+        };
+      });
 
       notifyLocalChange();
       writeInBackground("saveShop", { shop: normalized }, () => {
         cachedShops = previousShops;
+        cachedPosts = previousPosts;
         notifyLocalChange();
       });
       return normalized;
@@ -483,24 +493,10 @@ const API = (() => {
         : [...cachedPosts, normalized];
 
       notifyLocalChange();
-      if (isDailyReminderEnabled() && normalized.status !== "Posted" && (normalized.assignedEmail || normalized.assignedPerson)) {
-        writeInBackground("savePost", { post: normalized }, () => {
-          cachedPosts = previousPosts;
-          notifyLocalChange();
-        }, () => {
-          writeInBackground("sendPendingNotificationsForMember", {
-            member: {
-              name: normalized.assignedPerson || "",
-              email: normalized.assignedEmail || ""
-            }
-          });
-        });
-      } else {
-        writeInBackground("savePost", { post: normalized }, () => {
-          cachedPosts = previousPosts;
-          notifyLocalChange();
-        });
-      }
+      writeInBackground("savePost", { post: normalized }, () => {
+        cachedPosts = previousPosts;
+        notifyLocalChange();
+      });
       return normalized;
     },
 

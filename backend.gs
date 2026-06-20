@@ -8,7 +8,10 @@ function doPost(e) {
   try {
     var body = JSON.parse(e && e.postData ? e.postData.contents : "{}");
     var action = body.action || (e && e.parameter ? e.parameter.action : "");
-    if (action === "saveShop") saveRow("Shops", body.shop || {}, "Shop ID");
+    if (action === "saveShop") {
+      saveRow("Shops", body.shop || {}, "Shop ID");
+      syncPostsForShopAssignment(body.shop || {});
+    }
     else if (action === "deleteShop") deleteShopAndPosts(body.shopId, body.shopName);
     else if (action === "savePost") saveRow("Posts", body.post || {}, "Post ID");
     else if (action === "deletePost") deleteRow("Posts", body.postId, "Post ID");
@@ -100,6 +103,32 @@ function deleteRowsByValue(name, header, value) {
   for (i = data.length - 1; i >= 1; i--) {
     if (String(data[i][col]).trim() === String(value).trim()) sh.deleteRow(i + 1);
   }
+}
+function syncPostsForShopAssignment(shop) {
+  var normalizedShop = shop || {};
+  var shopName = String(normalizedShop.shopName || normalizedShop.name || "").trim();
+  var assignedPerson = String(normalizedShop.assignedPerson || normalizedShop.assignedTo || "").trim();
+  var assignedEmail = String(normalizedShop.assignedEmail || normalizedShop.assignedEmailAddress || "").trim();
+  var sh, data, head, shopCol, assignedPersonCol, assignedEmailCol, i;
+  if (!shopName) return;
+
+  sh = getSheet("Posts");
+  data = sh.getDataRange().getValues();
+  if (data.length <= 1) return;
+
+  head = data[0];
+  shopCol = head.indexOf("Shop Name");
+  assignedPersonCol = head.indexOf("Assigned Person");
+  assignedEmailCol = head.indexOf("Assigned Email");
+  if (shopCol < 0 || assignedPersonCol < 0 || assignedEmailCol < 0) return;
+
+  for (i = 1; i < data.length; i++) {
+    if (String(data[i][shopCol]).trim() !== shopName) continue;
+    data[i][assignedPersonCol] = assignedPerson;
+    data[i][assignedEmailCol] = assignedEmail;
+  }
+
+  sh.getRange(1, 1, data.length, head.length).setValues(data);
 }
 function saveSetting(rec) {
   var sh = getSheet("Settings"), data = sh.getDataRange().getValues(), head = data[0], row = -1, vals = [], i;
@@ -235,9 +264,10 @@ function sendPendingNotificationsForMember(member) {
   var shopAssignments = buildShopAssignmentMap(shops, members);
   var pending = [], i, p, assignedName, assignedEmail, status, shopName, fallback;
   var notificationsEnabled = isDailyReminderEnabled(members);
+  var forceSend = Boolean(member.force);
 
   if (!email) return { status: "success", sent: 0, message: "No email address provided." };
-  if (!notificationsEnabled && !member.force) return { status: "success", sent: 0, skipped: true, message: "Daily reminder email is disabled." };
+  if (!notificationsEnabled && !forceSend) return { status: "success", sent: 0, skipped: true, message: "Daily reminder email is disabled." };
 
   for (i = 0; i < posts.length; i++) {
     p = posts[i];
@@ -249,6 +279,7 @@ function sendPendingNotificationsForMember(member) {
     if (!assignedName) assignedName = fallback.name || "";
     if (!assignedEmail) assignedEmail = fallback.email || "";
     if (status === "posted" || status === "published" || status === "done") continue;
+    if (!forceSend && !isPostDueForReminder(p)) continue;
     if ((name && assignedName === name) || assignedEmail === email) pending.push(p);
   }
 
@@ -316,6 +347,28 @@ function buildPendingPostsEmail(name, posts) {
   lines.push("");
   lines.push("Please publish them or update their status in Social Media Tracker.");
   return lines.join("\n");
+}
+function isPostDueForReminder(post) {
+  var postingDate = toDateKey(post && post.postingDate);
+  var today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+  if (!postingDate) return false;
+  return postingDate <= today;
+}
+function toDateKey(value) {
+  var text, match, parsed;
+  if (Object.prototype.toString.call(value) === "[object Date]") {
+    if (isNaN(value.getTime())) return "";
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  }
+  text = String(value || "").trim();
+  if (!text) return "";
+  match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) return match[1] + "-" + match[2] + "-" + match[3];
+  parsed = new Date(text);
+  if (!isNaN(parsed.getTime())) {
+    return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  }
+  return "";
 }
 function formatSheetValue(value) {
   if (Object.prototype.toString.call(value) === "[object Date]") {
