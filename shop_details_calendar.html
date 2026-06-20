@@ -392,7 +392,15 @@
 <option value="">Select shop</option>
 </select>
 </div>
-<div class="grid gap-gutter grid-cols-1 md:grid-cols-2 xl:grid-cols-6">
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface-variant">Assigned Person</label>
+<div class="relative max-w-[420px]">
+<select id="post-assigned-person" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
+<option value="">Unassigned</option>
+</select>
+</div>
+</div>
+<div class="grid gap-gutter grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
 <div class="space-y-2 xl:col-span-2">
 <label class="block text-label-md font-label-md text-on-surface-variant">Title</label>
 <input id="post-title" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none" type="text">
@@ -417,14 +425,6 @@
 <option value="Inprogress">Inprogress</option>
 <option value="Rework">Rework</option>
 <option value="Completed">Completed</option>
-</select>
-</div>
-</div>
-<div class="space-y-2 xl:col-span-2">
-<label class="block text-label-md font-label-md text-on-surface-variant">Assigned Person</label>
-<div class="relative">
-<select id="post-assigned-person" class="w-full h-10 px-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none">
-<option value="">Unassigned</option>
 </select>
 </div>
 </div>
