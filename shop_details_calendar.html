@@ -379,7 +379,7 @@
 <!-- Modal Header -->
 <div class="px-gutter py-5 border-b border-border-subtle flex justify-between items-center bg-surface">
 <h2 class="text-headline-sm font-headline-sm text-on-surface" id="post-modal-title">Edit Post</h2>
-<button class="text-on-surface-variant hover:text-on-surface transition-colors" onclick="closeEditModal()">
+<button class="p-2 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="closeEditModal()" type="button" aria-label="Close">
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
@@ -1245,7 +1245,8 @@
     }
   }
 
-  function openEditPostModal(id) {
+  async function openEditPostModal(id) {
+    await API.forceSync();
     editingPostId = id;
     const post = API.getPosts().find(p => p.id === id);
     if (!post) return;
