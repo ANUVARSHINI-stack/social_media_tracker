@@ -545,12 +545,30 @@
             field.value = finalSelectedName;
         }
 
-        function getPostDescriptionValue(post) {
+        function getStoredPostDescription(post) {
             return String(post.description || "").trim();
         }
 
-        function getPostInstructionValue(post) {
+        function getStoredPostInstruction(post) {
             return String(post.instruction || "").trim();
+        }
+
+        function getPostDescriptionValue(post) {
+            const saved = getStoredPostDescription(post);
+            if (saved) return saved;
+            const shop = API.getShops().find(s => s.name === post.shopName) || {};
+            return String(post.caption || post.title || shop.description || "").trim();
+        }
+
+        function getPostInstructionValue(post) {
+            const saved = getStoredPostInstruction(post);
+            if (saved) return saved;
+            const shop = API.getShops().find(s => s.name === post.shopName) || {};
+            const bits = [];
+            if (shop.name) bits.push(`Shop: ${shop.name}`);
+            if (post.platform) bits.push(`Publish on ${post.platform}`);
+            if (post.postingDate) bits.push(`Scheduled for ${formatDate(post.postingDate)}`);
+            return bits.join(". ");
         }
 
         async function copyReadonlyField(fieldId) {
@@ -1119,8 +1137,8 @@
                 title: viewerMode ? (existingPost.title || "") : title,
                 category: viewerMode ? (existingPost.category || "") : category,
                 created: normalizeCreatedStatus(created),
-                description: viewerMode ? getPostDescriptionValue(existingPost) : document.getElementById("post-description").value.trim(),
-                instruction: viewerMode ? getPostInstructionValue(existingPost) : document.getElementById("post-instruction").value.trim(),
+                description: viewerMode ? getStoredPostDescription(existingPost) : document.getElementById("post-description").value.trim(),
+                instruction: viewerMode ? getStoredPostInstruction(existingPost) : document.getElementById("post-instruction").value.trim(),
                 driveLink,
                 status: viewerMode ? (existingPost.status || "Pending") : finalStatus,
                 caption: viewerMode ? (existingPost.caption || "") : caption,
