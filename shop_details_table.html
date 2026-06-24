@@ -673,6 +673,8 @@
             const categories = settings.filter(s => s.type === "Category").map(s => s.name).filter(Boolean);
             const sheetCategories = [...new Set(API.getPosts().map(p => p.category).filter(Boolean))];
             const finalCats = categories.length > 0 ? categories : sheetCategories;
+            const currentFilterValue = document.getElementById("table-category-filter")?.value || "All Categories";
+            const currentModalValue = document.getElementById("post-category")?.value || "";
 
             // Filter select dropdown
             const filterSelect = document.getElementById("table-category-filter");
@@ -683,6 +685,7 @@
                 opt.textContent = cat;
                 filterSelect.appendChild(opt);
             });
+            filterSelect.value = finalCats.includes(currentFilterValue) ? currentFilterValue : "All Categories";
 
             // Modal select dropdown
             const modalSelect = document.getElementById("post-category");
@@ -697,6 +700,15 @@
                 opt.textContent = cat;
                 modalSelect.appendChild(opt);
             });
+            if (currentModalValue) {
+                if (!finalCats.includes(currentModalValue)) {
+                    const opt = document.createElement("option");
+                    opt.value = currentModalValue;
+                    opt.textContent = currentModalValue;
+                    modalSelect.appendChild(opt);
+                }
+                modalSelect.value = currentModalValue;
+            }
         }
 
         function getPlatformOptions() {

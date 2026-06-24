@@ -932,6 +932,7 @@
   function populateCategoriesDropdown() {
     const dropdown = document.getElementById("post-category");
     if (!dropdown) return;
+    const currentValue = dropdown.value || "";
     const categories = API.getSettings().filter(s => s.type === "Category").map(s => s.name).filter(Boolean);
     const sheetCategories = [...new Set(API.getPosts().map(p => p.category).filter(Boolean))];
     const cats = categories.length > 0 ? categories : sheetCategories;
@@ -947,6 +948,15 @@
       opt.textContent = c;
       dropdown.appendChild(opt);
     });
+    if (currentValue) {
+      if (!cats.includes(currentValue)) {
+        const opt = document.createElement("option");
+        opt.value = currentValue;
+        opt.textContent = currentValue;
+        dropdown.appendChild(opt);
+      }
+      dropdown.value = currentValue;
+    }
   }
 
   function goToTableView() {
