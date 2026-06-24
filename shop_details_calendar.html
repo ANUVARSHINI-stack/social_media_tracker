@@ -536,13 +536,13 @@
     const socialLinks = document.getElementById('social-links-container');
     const addLinkButton = socialLinks ? socialLinks.parentElement.querySelector('button[type="button"]') : null;
 
-    [titleField, categoryField, captionField, dateField, statusField, assignedField, shopField].forEach(field => {
+    [titleField, categoryField, dateField, statusField, assignedField, shopField].forEach(field => {
       if (!field) return;
       field.disabled = isViewer;
       field.readOnly = isViewer;
       field.classList.toggle('opacity-60', isViewer);
     });
-    [descriptionField, instructionField].forEach(field => {
+    [captionField, descriptionField, instructionField].forEach(field => {
       if (!field) return;
       field.disabled = false;
       field.readOnly = false;
@@ -1450,7 +1450,7 @@
       description: document.getElementById('post-description').value.trim(),
       instruction: document.getElementById('post-instruction').value.trim(),
       driveLink,
-      caption: viewerMode ? (existingPost.caption || "") : caption,
+      caption,
       postingDate: viewerMode ? (existingPost.postingDate || "") : date,
       postingTime: viewerMode ? (existingPost.postingTime || "12:00") : "12:00",
       status: viewerMode ? (existingPost.status || "Pending") : finalStatus,
