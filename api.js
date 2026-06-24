@@ -15,7 +15,7 @@ const API = (() => {
 
   if (syncChannel) {
     syncChannel.onmessage = (event) => {
-      if (event.data === "refresh") syncFromRemote();
+      if (event.data === "refresh") syncFromRemote({ background: true });
     };
   }
 
@@ -373,11 +373,11 @@ const API = (() => {
     });
   }
 
-  function syncFromRemote() {
+  function syncFromRemote(options = {}) {
     if (syncInFlight) return syncInFlight;
 
     syncInFlight = (async () => {
-      const result = await remoteCall("readAll");
+      const result = await remoteCall("readAll", {}, options);
       if (!result) return null;
 
       cachedShops = uniqueById(recordsFromSheet(result.shops).map(normalizeShop).filter(s => s.name));
@@ -413,7 +413,15 @@ const API = (() => {
   }
 
   hydrateCache();
-  setTimeout(syncFromRemote, 100);
+  setTimeout(() => syncFromRemote({ background: true }), 100);
+  setInterval(() => {
+    if (document.hidden) return;
+    syncFromRemote({ background: true });
+  }, 5000);
+  window.addEventListener("focus", () => syncFromRemote({ background: true }));
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) syncFromRemote({ background: true });
+  });
 
   return {
     onStatusChange(callback) {
@@ -455,11 +463,15 @@ const API = (() => {
       });
 
       notifyLocalChange();
-      writeInBackground("saveShop", { shop: normalized }, () => {
+      const result = await remoteCall("saveShop", { shop: normalized });
+      if (!result) {
         cachedShops = previousShops;
         cachedPosts = previousPosts;
         notifyLocalChange();
-      });
+        return null;
+      }
+      await syncFromRemote({ background: true });
+      broadcastRefresh();
       return normalized;
     },
 
@@ -472,11 +484,15 @@ const API = (() => {
       if (shopName) cachedPosts = cachedPosts.filter(p => p.shopName !== shopName);
 
       notifyLocalChange();
-      writeInBackground("deleteShop", { shopId, shopName }, () => {
+      const result = await remoteCall("deleteShop", { shopId, shopName });
+      if (!result) {
         cachedShops = previousShops;
         cachedPosts = previousPosts;
         notifyLocalChange();
-      });
+        return false;
+      }
+      await syncFromRemote({ background: true });
+      broadcastRefresh();
       return true;
     },
 
@@ -499,7 +515,7 @@ const API = (() => {
         notifyLocalChange();
         return null;
       }
-      await syncFromRemote();
+      await syncFromRemote({ background: true });
       broadcastRefresh();
       return normalized;
     },
@@ -508,10 +524,14 @@ const API = (() => {
       const previousPosts = cachedPosts;
       cachedPosts = cachedPosts.filter(p => p.id !== postId);
       notifyLocalChange();
-      writeInBackground("deletePost", { postId }, () => {
+      const result = await remoteCall("deletePost", { postId });
+      if (!result) {
         cachedPosts = previousPosts;
         notifyLocalChange();
-      });
+        return false;
+      }
+      await syncFromRemote({ background: true });
+      broadcastRefresh();
       return true;
     },
 
@@ -528,10 +548,14 @@ const API = (() => {
         : [...cachedSettings, normalized];
 
       notifyLocalChange();
-      writeInBackground("saveSetting", { setting: normalized }, () => {
+      const result = await remoteCall("saveSetting", { setting: normalized });
+      if (!result) {
         cachedSettings = previousSettings;
         notifyLocalChange();
-      });
+        return null;
+      }
+      await syncFromRemote({ background: true });
+      broadcastRefresh();
       return normalized;
     },
 
@@ -558,10 +582,14 @@ const API = (() => {
       const previousSettings = cachedSettings;
       cachedSettings = cachedSettings.filter(s => !(s.type === type && s.name === name));
       notifyLocalChange();
-      writeInBackground("deleteSetting", { type, name }, () => {
+      const result = await remoteCall("deleteSetting", { type, name });
+      if (!result) {
         cachedSettings = previousSettings;
         notifyLocalChange();
-      });
+        return false;
+      }
+      await syncFromRemote({ background: true });
+      broadcastRefresh();
       return true;
     },
 
