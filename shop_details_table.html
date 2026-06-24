@@ -983,8 +983,7 @@
             loadPosts();
         }
 
-        async function openEditPostModal(id) {
-            await API.forceSync();
+        function openEditPostModal(id) {
             allPosts = API.getPosts().filter(p => p.shopName === activeShopName);
             editingPostId = id;
             const post = allPosts.find(p => p.id === id);
