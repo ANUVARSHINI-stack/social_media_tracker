@@ -371,6 +371,7 @@
     <script>
         let settingsData = [];
         let originalMemberName = null; // Track name when editing team member
+        const MASKED_MEMBER_PASSWORD = "********";
 
         document.addEventListener("DOMContentLoaded", () => {
             loadSettings();
@@ -780,6 +781,9 @@
             document.getElementById("member-email").value = "";
             document.getElementById("member-password").value = "";
             document.getElementById("member-password").placeholder = "Set password";
+            document.getElementById("member-password").type = "password";
+            document.getElementById("member-password-toggle").setAttribute("aria-label", "Show password");
+            document.getElementById("member-password-toggle").innerHTML = `<span class="material-symbols-outlined text-[18px]">visibility</span>`;
             populateMemberRoleOptions("Viewer");
             showMemberModal();
         }
@@ -789,8 +793,13 @@
             document.getElementById("modal-member-title").innerText = "Edit Team Member";
             document.getElementById("member-name").value = name;
             document.getElementById("member-email").value = email;
-            document.getElementById("member-password").value = "";
-            document.getElementById("member-password").placeholder = "Leave blank to keep current password";
+            const existingMember = settingsData.find(setting => setting.type === "TeamMember" && setting.name === name);
+            const hasStoredPassword = Boolean(existingMember && String(existingMember.value3 || "").trim());
+            document.getElementById("member-password").value = hasStoredPassword ? MASKED_MEMBER_PASSWORD : "";
+            document.getElementById("member-password").placeholder = hasStoredPassword ? "Saved password" : "Set password";
+            document.getElementById("member-password").type = "password";
+            document.getElementById("member-password-toggle").setAttribute("aria-label", "Show password");
+            document.getElementById("member-password-toggle").innerHTML = `<span class="material-symbols-outlined text-[18px]">visibility</span>`;
             populateMemberRoleOptions(role || "Viewer");
             showMemberModal();
         }
@@ -818,9 +827,10 @@
 
             const name = document.getElementById("member-name").value.trim();
             const email = document.getElementById("member-email").value.trim();
-            const password = document.getElementById("member-password").value.trim();
+            const rawPassword = document.getElementById("member-password").value.trim();
             const role = document.getElementById("member-role").value;
             const existingMember = settingsData.find(setting => setting.type === "TeamMember" && setting.name === originalMemberName);
+            const password = rawPassword === MASKED_MEMBER_PASSWORD ? "" : rawPassword;
             const storedPassword = await AUTH.prepareStoredPassword(password, existingMember ? existingMember.value3 : "");
 
             if (!storedPassword) {

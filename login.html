@@ -98,13 +98,23 @@
 
             <div class="space-y-2">
               <label for="login-password" class="block text-sm font-semibold text-ink">Password</label>
-              <input
-                id="login-password"
-                type="password"
-                class="h-14 w-full rounded-2xl border border-border bg-slate-50 px-4 text-sm text-ink outline-none transition duration-200 placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
-                placeholder="Enter password"
-                required
-              >
+              <div class="relative">
+                <input
+                  id="login-password"
+                  type="password"
+                  class="h-14 w-full rounded-2xl border border-border bg-slate-50 px-4 pr-14 text-sm text-ink outline-none transition duration-200 placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10"
+                  placeholder="Enter password"
+                  required
+                >
+                <button
+                  id="login-password-toggle"
+                  type="button"
+                  class="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Show password"
+                >
+                  <span class="material-symbols-outlined text-[20px]">visibility</span>
+                </button>
+              </div>
             </div>
 
             <p id="login-error" class="hidden rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"></p>
@@ -128,8 +138,18 @@
       const form = document.getElementById("login-form");
       const emailInput = document.getElementById("login-email");
       const passwordInput = document.getElementById("login-password");
+      const passwordToggle = document.getElementById("login-password-toggle");
       const errorBox = document.getElementById("login-error");
       const submitButton = document.getElementById("login-submit");
+
+      if (passwordToggle) {
+        passwordToggle.addEventListener("click", () => {
+          const isPassword = passwordInput.type === "password";
+          passwordInput.type = isPassword ? "text" : "password";
+          passwordToggle.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+          passwordToggle.innerHTML = `<span class="material-symbols-outlined text-[20px]">${isPassword ? "visibility_off" : "visibility"}</span>`;
+        });
+      }
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
