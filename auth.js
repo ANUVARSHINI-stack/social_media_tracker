@@ -80,7 +80,7 @@ const AUTH = (() => {
       name: String(member.name || "").trim(),
       email: String(member.email || "").trim(),
       role: normalizeRole(member.role),
-      passwordHash: String(member.passwordHash || "").trim()
+      password: String((member.password ?? member.passwordHash) || "").trim()
     };
     saveOverrides(overrides);
   }
@@ -156,8 +156,7 @@ const AUTH = (() => {
     const currentValue = String(existingValue || "").trim();
 
     if (!nextPassword) return currentValue;
-    if (nextPassword.startsWith(`${HASH_PREFIX}$`)) return nextPassword;
-    return hashPassword(nextPassword);
+    return nextPassword;
   }
 
   function findMemberByEmail(email) {
@@ -175,7 +174,7 @@ const AUTH = (() => {
       name: override && override.name ? override.name : (settingsMember ? settingsMember.name : ""),
       value1: override && override.email ? override.email : (settingsMember ? settingsMember.value1 : ""),
       value2: override && override.role ? override.role : (settingsMember ? settingsMember.value2 : ""),
-      value3: override && override.passwordHash ? override.passwordHash : (settingsMember ? settingsMember.value3 : "")
+      value3: override && override.password ? override.password : (settingsMember ? settingsMember.value3 : "")
     };
   }
 
@@ -193,36 +192,32 @@ const AUTH = (() => {
       return { ok: false, message: "Invalid email or password." };
     }
 
-    const missingPassword = !String(member.value3 || "").trim();
+    const storedValue = String(member.value3 || "").trim();
+    const missingPassword = !storedValue;
     const valid = missingPassword
       ? String(password || "") === BOOTSTRAP_PASSWORD
-      : await verifyPassword(password, member.value3 || "");
+      : await verifyPassword(password, storedValue);
     if (!valid) {
       return { ok: false, message: "Invalid email or password." };
     }
 
-    if (missingPassword || (member.value3 && !String(member.value3).startsWith(`${HASH_PREFIX}$`))) {
-      const upgraded = await hashPassword(password);
-      setCredentialOverride({
-        name: member.name,
-        email: member.value1,
-        role: member.value2 || "Viewer",
-        passwordHash: upgraded
-      });
+    const plainPassword = String(password || "").trim();
+    if (plainPassword && (missingPassword || storedValue.startsWith(`${HASH_PREFIX}$`) || storedValue !== plainPassword)) {
       await API.saveSetting({
         type: "TeamMember",
         name: member.name,
         value1: member.value1,
         value2: member.value2,
-        value3: upgraded
+        value3: plainPassword
       });
+      member.value3 = plainPassword;
     }
 
     setCredentialOverride({
       name: member.name,
       email: member.value1,
       role: member.value2 || "Viewer",
-      passwordHash: String(member.value3 || "").trim()
+      password: String(member.value3 || plainPassword || "").trim()
     });
 
     const session = setSession({
