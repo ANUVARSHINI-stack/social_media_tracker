@@ -797,9 +797,9 @@
             const hasStoredPassword = Boolean(existingMember && String(existingMember.value3 || "").trim());
             document.getElementById("member-password").value = hasStoredPassword ? MASKED_MEMBER_PASSWORD : "";
             document.getElementById("member-password").placeholder = hasStoredPassword ? "Saved password" : "Set password";
-            document.getElementById("member-password").type = "password";
-            document.getElementById("member-password-toggle").setAttribute("aria-label", "Show password");
-            document.getElementById("member-password-toggle").innerHTML = `<span class="material-symbols-outlined text-[18px]">visibility</span>`;
+            document.getElementById("member-password").type = "text";
+            document.getElementById("member-password-toggle").setAttribute("aria-label", "Hide password");
+            document.getElementById("member-password-toggle").innerHTML = `<span class="material-symbols-outlined text-[18px]">visibility_off</span>`;
             populateMemberRoleOptions(role || "Viewer");
             showMemberModal();
         }

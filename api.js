@@ -120,6 +120,21 @@ const API = (() => {
     return text === "posted" || text === "published" || text === "done" ? "Posted" : "Pending";
   }
 
+  function comparePostsBySchedule(a, b) {
+    const dateA = String(a && a.postingDate || "");
+    const dateB = String(b && b.postingDate || "");
+    if (dateA && dateB && dateA !== dateB) return dateA.localeCompare(dateB);
+    if (dateA && !dateB) return -1;
+    if (!dateA && dateB) return 1;
+
+    const timeA = String(a && a.postingTime || "");
+    const timeB = String(b && b.postingTime || "");
+    if (timeA && timeB && timeA !== timeB) return timeA.localeCompare(timeB);
+    if (timeA && !timeB) return -1;
+    if (!timeA && timeB) return 1;
+
+    return String(a && a.title || "").localeCompare(String(b && b.title || ""));
+  }
   function recordsFromSheet(list) {
     if (!Array.isArray(list) || list.length === 0) return [];
 
@@ -497,7 +512,9 @@ const API = (() => {
     },
 
     getPosts() {
-      return cachedPosts.map(post => ({ ...enrichPostAssignment(post) }));
+      return cachedPosts
+        .map(post => ({ ...enrichPostAssignment(post) }))
+        .sort(comparePostsBySchedule);
     },
 
     async savePost(post) {
