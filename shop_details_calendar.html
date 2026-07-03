@@ -118,7 +118,7 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            grid-auto-rows: minmax(120px, auto);
+            grid-auto-rows: 168px;
         }
         .glass-header {
             background: rgba(255, 255, 255, 0.8);
@@ -281,7 +281,7 @@
 <div class="py-3 text-center text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Sun</div>
 </div>
 <!-- Days Grid -->
-<div class="calendar-grid" id="days-grid-container">
+<div class="calendar-grid overflow-y-auto custom-scrollbar max-h-[calc(100vh-320px)]" id="days-grid-container">
 <!-- Days will be dynamically populated -->
 </div>
 </div>
@@ -1015,7 +1015,7 @@
       const borderClass = (hasBorderR ? "border-r " : "") + "border-b border-border-subtle";
 
       const div = document.createElement("div");
-      div.className = `p-3 ${borderClass} opacity-40 h-[120px]`;
+      div.className = `p-3 ${borderClass} opacity-40 h-[168px]`;
       div.innerHTML = `<span class="text-label-md">${i}</span>`;
       grid.appendChild(div);
     }
@@ -1050,7 +1050,7 @@
       const div = document.createElement("div");
       div.onclick = () => openDateDetails(day);
 
-      let dayClass = `p-3 ${borderClass} ${cellColors.cell} group transition-colors cursor-pointer relative min-h-[120px] flex flex-col justify-between`;
+      let dayClass = `p-3 ${borderClass} ${cellColors.cell} group transition-colors cursor-pointer relative h-[168px] min-h-[168px] flex flex-col overflow-hidden`;
       if (isSelected) dayClass += " ring-2 ring-primary ring-inset";
 
       div.className = dayClass;
@@ -1060,7 +1060,7 @@
       // Posts preview HTML
       let postsHTML = "";
       if (dayPosts.length > 0) {
-        postsHTML = `<div class="mt-2 flex flex-col gap-1 overflow-hidden">`;
+        postsHTML = `<div class="mt-2 flex-1 min-h-0 flex flex-col gap-1 overflow-y-auto overflow-x-hidden pr-1 custom-scrollbar">`;
         dayPosts.forEach((post, pIdx) => {
           if (pIdx < 2) {
             const postColors = getCalendarColorClasses(getCalendarPostState(post, dateStr, todayStr));
@@ -1098,7 +1098,7 @@
       const borderClass = (hasBorderR ? "border-r " : "") + "border-b border-border-subtle";
 
       const div = document.createElement("div");
-      div.className = `p-3 ${borderClass} opacity-40 h-[120px]`;
+      div.className = `p-3 ${borderClass} opacity-40 h-[168px]`;
       div.innerHTML = `<span class="text-label-md">${i}</span>`;
       grid.appendChild(div);
     }
