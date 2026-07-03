@@ -2,7 +2,7 @@ function doGet(e) {
   var action = e && e.parameter ? e.parameter.action : "";
   if (action === "diagnostics") return reply(getDiagnostics());
   if (action !== "readAll") return reply({ status: "error", message: "Invalid action" });
-  return reply({ status: "success", shops: readRows("Shops"), posts: readRows("Posts"), settings: readRows("Settings"), logs: readRows("Notifications Log") });
+  return reply({ status: "success", shops: readRows("Shops"), posts: readRows("Posts"), settings: readRows("Settings"), teamMembers: readRows("Team Members"), logs: readRows("Notifications Log") });
 }
 function doPost(e) {
   try {
@@ -146,10 +146,19 @@ function saveSetting(rec) {
   if (String(rec.type || "") === "Notification" && String(rec.name || "") === "Daily reminder email") {
     sh.getRange(row, 4).setNumberFormat("@").setValue(String(rec.value2 || "21:00"));
   }
+  if (String(rec.type || "") === "TeamMember") syncTeamMemberRecord(rec);
 }
 function deleteSetting(type, name) {
   var sh = getSheet("Settings"), data = sh.getDataRange().getValues(), i;
-  for (i = 1; i < data.length; i++) if (String(data[i][0]) === String(type) && String(data[i][1]) === String(name)) { sh.deleteRow(i + 1); return; }
+  for (i = 1; i < data.length; i++) if (String(data[i][0]) === String(type) && String(data[i][1]) === String(name)) { sh.deleteRow(i + 1); break; }
+  if (String(type || "") === "TeamMember") deleteRow("Team Members", name, "Name");
+}
+function syncTeamMemberRecord(rec) {
+  saveRow("Team Members", {
+    name: rec.name || "",
+    role: rec.value2 || rec.role || "",
+    password: rec.value3 || rec.password || ""
+  }, "Name");
 }
 function maybeConfigureNotificationTrigger(setting) {
   if (String(setting.type || "") !== "Notification" || String(setting.name || "") !== "Daily reminder email") return;
@@ -381,6 +390,7 @@ function ensureHeaders(sh, name) {
     "Shops": ["Shop ID", "Shop Name", "Description", "Assigned Person", "Assigned Email"],
     "Posts": ["Post ID", "Shop Name", "Title", "Platform", "Category", "Created", "Description", "Instruction", "Assets Link", "Caption", "Posting Date", "Posting Time", "Status", "Assigned Person", "Assigned Email", "Post URL"],
     "Settings": ["Type", "Name", "Value1", "Value2", "Value3"],
+    "Team Members": ["Name", "Role", "Password"],
     "Notifications Log": ["Log ID", "Timestamp", "Post ID", "Shop Name", "Assigned Email", "Status", "Action Taken"]
   }, need = map[name], current, merged = [], i;
   if (!need) return;
