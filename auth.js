@@ -239,7 +239,9 @@ const AUTH = (() => {
     const page = window.location.pathname.split("/").pop() || "index.html";
     const session = getSession();
 
-    if (page === LOGIN_PAGE) {
+    // Account for clean URLs (e.g. /login instead of /login.html)
+    const isLoginPage = page === LOGIN_PAGE || page === LOGIN_PAGE.replace(".html", "");
+    if (isLoginPage) {
       if (session) {
         window.location.replace(session.access === "viewer" ? "index.html" : "index.html");
       }

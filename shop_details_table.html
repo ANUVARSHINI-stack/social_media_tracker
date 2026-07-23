@@ -418,6 +418,7 @@
         // Post Management Table Controller
         let activeShopName = "";
         let allPosts = [];
+        let visibleFilteredPosts = [];
         let editingPostId = null;
         const CREATED_STATUS_OPTIONS = ["Approved", "Inprogress", "Rework", "Completed"];
 
@@ -841,6 +842,7 @@
                 return timeA.localeCompare(timeB);
             });
 
+            visibleFilteredPosts = filtered.slice();
             renderTableRows(filtered);
             updateQuickStats(shopPosts);
 
@@ -1193,7 +1195,7 @@
         }
 
         function exportTableToPDF() {
-            const shopPosts = allPosts.filter(p => p.shopName === activeShopName);
+            const exportPosts = visibleFilteredPosts.slice();
             downloadTablePDF({
                 filename: `${activeShopName.replace(/\s+/g, '_')}_posts.pdf`,
                 title: `${activeShopName} Posts`,
@@ -1209,7 +1211,7 @@
                     { label: "Platform", key: "platform", width: 0.9 },
                     { label: "Post URL", key: "postUrl", width: 1.4 }
                 ],
-                rows: shopPosts.map(p => ({
+                rows: exportPosts.map(p => ({
                     title: p.title || (p.caption ? p.caption.substring(0, 25) : "Untitled Post"),
                     category: p.category || "Post",
                     createdLabel: normalizeCreatedStatus(p.created),
