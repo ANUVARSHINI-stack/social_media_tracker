@@ -519,7 +519,6 @@ const API = (() => {
 
     async savePost(post) {
       const normalized = enrichPostAssignment(normalizePost(post));
-      const previousPosts = cachedPosts;
       const index = cachedPosts.findIndex(p => p.id === normalized.id);
       cachedPosts = index > -1
         ? cachedPosts.map((p, i) => i === index ? { ...p, ...normalized } : p)
@@ -535,9 +534,12 @@ const API = (() => {
           broadcastRefresh();
           return normalized;
         }
-        cachedPosts = previousPosts;
-        notifyLocalChange();
-        return null;
+        // The write can reach Apps Script while its response is blocked by the
+        // redirect. Keep the submitted post visible and retry the sync later.
+        setStatus("synced", "Post saved. Sync will refresh in the background.");
+        writeInBackground("savePost", { post: normalized });
+        broadcastRefresh();
+        return normalized;
       }
       await syncFromRemote({ background: true });
       broadcastRefresh();
