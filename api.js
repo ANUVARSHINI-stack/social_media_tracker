@@ -528,6 +528,13 @@ const API = (() => {
       notifyLocalChange();
       const result = await remoteCall("savePost", { post: normalized });
       if (!result) {
+        // Apps Script can complete a write even when its redirect response is not
+        // available to the browser. Confirm the saved post before rolling back.
+        const refreshed = await syncFromRemote({ background: true });
+        if (refreshed && cachedPosts.some(p => p.id === normalized.id)) {
+          broadcastRefresh();
+          return normalized;
+        }
         cachedPosts = previousPosts;
         notifyLocalChange();
         return null;
