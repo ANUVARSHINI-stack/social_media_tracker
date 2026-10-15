@@ -618,7 +618,10 @@ function setupSyncStatusPill() {
   function updatePill(status, message) {
     pillContainer.className = "flex items-center space-x-1.5 px-3 py-1 py-1.5 rounded-full text-[11px] font-semibold transition-all border shadow-sm ";
     
-    if (status === "local") {
+    if (status === "demo") {
+      pillContainer.classList.add("bg-indigo-50", "text-primary", "border-primary/20");
+      pillContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-primary"></span><span>Faculty Demo</span>`;
+    } else if (status === "local") {
       pillContainer.classList.add("bg-surface-container", "text-on-surface-variant", "border-border-subtle");
       pillContainer.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-outline"></span><span>Local Storage Mode</span>`;
     } else if (status === "synced") {

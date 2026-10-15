@@ -1,5 +1,6 @@
 // api.js - Central Data Access Layer for Social Media Tracker (Google Sheets Sync Only)
 const API = (() => {
+  const isDemoMode = typeof CONFIG !== "undefined" && Boolean(CONFIG.DEMO_MODE);
   let cachedShops = [];
   let cachedPosts = [];
   let cachedSettings = [];
@@ -8,10 +9,10 @@ const API = (() => {
   let lastErrorMessage = "";
 
   const syncChannel = "BroadcastChannel" in window
-    ? new BroadcastChannel("socialtrack_sync_channel")
+    ? new BroadcastChannel(isDemoMode ? "socialtrack_demo_sync_channel" : "socialtrack_sync_channel")
     : null;
-  const DATA_CACHE_KEY = "socialtrack_data_cache_v1";
-  const GOOGLE_PROFILE_KEY = "socialtrack_google_profile";
+  const DATA_CACHE_KEY = isDemoMode ? "socialtrack_demo_data_cache_v1" : "socialtrack_data_cache_v1";
+  const GOOGLE_PROFILE_KEY = isDemoMode ? "socialtrack_demo_google_profile" : "socialtrack_google_profile";
 
   if (syncChannel) {
     syncChannel.onmessage = (event) => {
@@ -102,6 +103,48 @@ const API = (() => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  }
+
+  function dateFromToday(offset) {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    date.setDate(date.getDate() + offset);
+    return formatLocalDate(date);
+  }
+
+  function createDemoData() {
+    const shops = [
+      { id: "demo_cse", name: "Computer Science Department", description: "Department announcements and student achievements.", assignedPerson: "Asha Menon", assignedEmail: "asha.menon@demo-campus.edu" },
+      { id: "demo_innovation", name: "Innovation Cell", description: "Innovation events, entrepreneurship, and project showcases.", assignedPerson: "Rahul Dev", assignedEmail: "rahul.dev@demo-campus.edu" },
+      { id: "demo_student_affairs", name: "Student Affairs", description: "Campus activities, clubs, and student services.", assignedPerson: "Nila Thomas", assignedEmail: "nila.thomas@demo-campus.edu" }
+    ];
+
+    const settings = [
+      { type: "Category", name: "Poster" },
+      { type: "Category", name: "Reel" },
+      { type: "Category", name: "Carousel" },
+      { type: "Platform", name: "Instagram" },
+      { type: "Platform", name: "LinkedIn" },
+      { type: "Platform", name: "YouTube" },
+      { type: "TeamRole", name: "Admin" },
+      { type: "TeamRole", name: "Viewer" },
+      { type: "TeamMember", name: "Faculty Demo Admin", value1: "admin@demo-campus.edu", value2: "Admin", value3: "DemoAdmin@123" },
+      { type: "TeamMember", name: "Asha Menon", value1: "asha.menon@demo-campus.edu", value2: "Viewer", value3: "DemoViewer@123" },
+      { type: "TeamMember", name: "Rahul Dev", value1: "rahul.dev@demo-campus.edu", value2: "Viewer", value3: "DemoViewer@123" },
+      { type: "TeamMember", name: "Nila Thomas", value1: "nila.thomas@demo-campus.edu", value2: "Viewer", value3: "DemoViewer@123" },
+      { type: "Notification", name: "Daily reminder email", value1: "false", value2: "09:00" }
+    ];
+
+    const posts = [
+      { id: "demo_post_1", shopName: "Computer Science Department", title: "Research Seminar Series", category: "Poster", platform: "LinkedIn", description: "Announce the seminar topic, speaker details, venue, and registration information.", instruction: "Use the approved departmental template and include the registration deadline.", caption: "Join our Research Seminar Series and explore emerging ideas in computing.", postingDate: dateFromToday(-1), postingTime: "10:00", status: "Posted", assignedPerson: "Asha Menon", assignedEmail: "asha.menon@demo-campus.edu", created: "Completed" },
+      { id: "demo_post_2", shopName: "Innovation Cell", title: "Startup Pitch Day", category: "Reel", platform: "Instagram", description: "Short video invitation for student founders to present their ideas.", instruction: "Keep the video under 30 seconds and highlight the registration link in the caption.", caption: "Got an idea worth building? Register for Startup Pitch Day.", postingDate: dateFromToday(0), postingTime: "11:30", status: "Pending", assignedPerson: "Rahul Dev", assignedEmail: "rahul.dev@demo-campus.edu", created: "Inprogress" },
+      { id: "demo_post_3", shopName: "Student Affairs", title: "Campus Club Fair", category: "Carousel", platform: "Instagram", description: "Showcase the student clubs participating in this week's club fair.", instruction: "Use one slide per club and close with the event location and time.", caption: "Find your community at the Campus Club Fair.", postingDate: dateFromToday(1), postingTime: "09:30", status: "Pending", assignedPerson: "Nila Thomas", assignedEmail: "nila.thomas@demo-campus.edu", created: "Approved" },
+      { id: "demo_post_4", shopName: "Computer Science Department", title: "Student Achievement Spotlight", category: "Poster", platform: "LinkedIn", description: "Recognise the student team for their national hackathon achievement.", instruction: "Confirm names and achievement details with the faculty coordinator before publishing.", caption: "Celebrating innovation, teamwork, and student success.", postingDate: dateFromToday(3), postingTime: "14:00", status: "Pending", assignedPerson: "Asha Menon", assignedEmail: "asha.menon@demo-campus.edu", created: "Rework" },
+      { id: "demo_post_5", shopName: "Innovation Cell", title: "Prototype Showcase", category: "Carousel", platform: "LinkedIn", description: "Feature selected student prototypes and their real-world impact.", instruction: "Include a clear project title and a concise problem statement for every slide.", caption: "Ideas becoming impact: discover our student prototypes.", postingDate: dateFromToday(5), postingTime: "12:00", status: "Pending", assignedPerson: "Rahul Dev", assignedEmail: "rahul.dev@demo-campus.edu", created: "Approved" },
+      { id: "demo_post_6", shopName: "Student Affairs", title: "Wellness Workshop", category: "Poster", platform: "Instagram", description: "Promote the student wellness workshop and its registration details.", instruction: "Keep the tone supportive and include the counselling centre contact information.", caption: "Take a pause and join our student wellness workshop.", postingDate: dateFromToday(7), postingTime: "10:30", status: "Pending", assignedPerson: "Nila Thomas", assignedEmail: "nila.thomas@demo-campus.edu", created: "Completed" }
+    ];
+
+    return { shops, posts, settings, logs: [] };
   }
 
   function normalizeTime(value) {
@@ -267,6 +310,21 @@ const API = (() => {
     }
   }
 
+  function initializeDemoData() {
+    if (CONFIG.DEMO_RESET_REQUESTED) {
+      localStorage.removeItem(DATA_CACHE_KEY);
+      sessionStorage.removeItem("socialtrack_demo_reset_requested");
+    }
+
+    if (hydrateCache()) return;
+    const demoData = createDemoData();
+    cachedShops = demoData.shops.map(normalizeShop);
+    cachedPosts = demoData.posts.map(normalizePost);
+    cachedSettings = demoData.settings.map(normalizeSetting);
+    cachedLogs = [];
+    persistCache();
+  }
+
   function uniqueById(records) {
     const seen = new Set();
     return records.filter(record => {
@@ -332,10 +390,24 @@ const API = (() => {
   }
 
   async function remoteCall(action, payload = {}, options = {}) {
-      if (!CONFIG.APPS_SCRIPT_URL) {
-        setStatus("error", "Google Sheets URL is not configured.");
-        return null;
+    if (isDemoMode) {
+      setStatus("demo", "Faculty demo data is stored only in this browser.");
+      if (action === "readAll") {
+        return {
+          status: "success",
+          shops: cachedShops,
+          posts: cachedPosts,
+          settings: cachedSettings,
+          logs: cachedLogs
+        };
       }
+      return { status: "success", demo: true };
+    }
+
+    if (!CONFIG.APPS_SCRIPT_URL) {
+      setStatus("error", "Google Sheets URL is not configured.");
+      return null;
+    }
 
     if (!options.background) {
       setStatus("syncing", "Syncing with Google Sheets...");
@@ -427,21 +499,28 @@ const API = (() => {
     return String(notifSetting.value1 || "").trim().toLowerCase() === "true";
   }
 
-  hydrateCache();
-  setTimeout(() => syncFromRemote({ background: true }), 100);
-  setInterval(() => {
-    if (document.hidden) return;
-    syncFromRemote({ background: true });
-  }, 5000);
-  window.addEventListener("focus", () => syncFromRemote({ background: true }));
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) syncFromRemote({ background: true });
-  });
+  if (isDemoMode) {
+    initializeDemoData();
+  } else {
+    hydrateCache();
+    setTimeout(() => syncFromRemote({ background: true }), 100);
+    setInterval(() => {
+      if (document.hidden) return;
+      syncFromRemote({ background: true });
+    }, 5000);
+    window.addEventListener("focus", () => syncFromRemote({ background: true }));
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) syncFromRemote({ background: true });
+    });
+  }
 
   return {
     onStatusChange(callback) {
       statusListener = callback;
-      callback(CONFIG.APPS_SCRIPT_URL ? "synced" : "error", CONFIG.APPS_SCRIPT_URL ? "Idle" : "Google Sheets URL missing");
+      callback(
+        isDemoMode ? "demo" : (CONFIG.APPS_SCRIPT_URL ? "synced" : "error"),
+        isDemoMode ? "Faculty demo data is stored only in this browser." : (CONFIG.APPS_SCRIPT_URL ? "Idle" : "Google Sheets URL missing")
+      );
     },
 
     forceSync() {
@@ -453,7 +532,7 @@ const API = (() => {
     },
 
     isLocalMode() {
-      return false;
+      return isDemoMode;
     },
 
     getShops() {

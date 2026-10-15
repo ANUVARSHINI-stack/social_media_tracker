@@ -1,6 +1,7 @@
 const AUTH = (() => {
-  const SESSION_KEY = "socialtrack_auth_session_v1";
-  const OVERRIDES_KEY = "socialtrack_auth_overrides_v1";
+  const isDemoMode = typeof CONFIG !== "undefined" && Boolean(CONFIG.DEMO_MODE);
+  const SESSION_KEY = isDemoMode ? "socialtrack_demo_auth_session_v1" : "socialtrack_auth_session_v1";
+  const OVERRIDES_KEY = isDemoMode ? "socialtrack_demo_auth_overrides_v1" : "socialtrack_auth_overrides_v1";
   const LOGIN_PAGE = "login.html";
   const HASH_PREFIX = "pbkdf2";
   const HASH_ITERATIONS = 120000;
