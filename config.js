@@ -1,22 +1,5 @@
 // Configuration for Social Media Tracker
-// Open any page with ?demo=1 to use browser-only faculty demo data.
-const demoParams = new URLSearchParams(window.location.search);
-const DEMO_MODE_STORAGE_KEY = "socialtrack_demo_mode";
-const DEMO_RESET_STORAGE_KEY = "socialtrack_demo_reset_requested";
-
-if (demoParams.get("demo") === "1") {
-  sessionStorage.setItem(DEMO_MODE_STORAGE_KEY, "1");
-}
-if (demoParams.get("demo") === "0") {
-  sessionStorage.removeItem(DEMO_MODE_STORAGE_KEY);
-}
-if (demoParams.get("demoReset") === "1") {
-  sessionStorage.setItem(DEMO_RESET_STORAGE_KEY, "1");
-}
-
 const CONFIG = {
-  DEMO_MODE: sessionStorage.getItem(DEMO_MODE_STORAGE_KEY) === "1",
-  DEMO_RESET_REQUESTED: sessionStorage.getItem(DEMO_RESET_STORAGE_KEY) === "1",
   // Pasting Google Apps Script Web App URL here enables Google Sheets sync.
   // Required for Google Sheets sync.
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbxrkefkeWvtD1X9Sl6la94cC7GG1mmmWg7KzDaVdD0E8iTata7RyR0z2IvNGL9Osz8q/exec",
