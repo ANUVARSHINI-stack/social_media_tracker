@@ -143,6 +143,11 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #4744e5;
         }
+        .shop-picker { position: relative; }
+        .shop-picker-menu { position: absolute; top: calc(100% + 10px); left: 0; z-index: 60; width: min(320px, calc(100vw - 32px)); padding: 8px; background: #fff; border: 1px solid #E6E9EF; border-radius: 12px; box-shadow: 0 16px 40px rgba(25, 28, 29, .16); }
+        .shop-picker-options { max-height: min(300px, 55vh); overflow-y: auto; overscroll-behavior: contain; }
+        .shop-picker-option { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 10px; border-radius: 8px; color: #333; text-align: left; }
+        .shop-picker-option:hover, .shop-picker-option[aria-selected="true"] { background: #f0efff; color: #4744e5; }
     </style>
 </head>
 <body class="bg-background text-on-surface">
@@ -198,9 +203,7 @@
   <div class="flex items-center gap-4">
     <div class="flex items-center gap-2 text-text-secondary">
       <span class="material-symbols-outlined text-lg" data-icon="storefront">storefront</span>
-      <select id="header-shop-selector" class="border-none focus:ring-0 bg-transparent text-label-md font-semibold text-on-surface cursor-pointer p-0 pr-6">
-        <!-- options populated dynamically -->
-      </select>
+      <div id="header-shop-selector" class="shop-picker"></div>
     </div>
   </div>
   <div class="flex-1 max-w-md mx-8">
@@ -743,34 +746,113 @@
       activeShopName = ALL_SHOPS_VALUE;
     }
 
-    selector.innerHTML = "";
-    const allOpt = document.createElement("option");
-    allOpt.value = ALL_SHOPS_VALUE;
-    allOpt.textContent = "All Shops";
-    selector.appendChild(allOpt);
-    shops.forEach(shop => {
-      const opt = document.createElement("option");
-      opt.value = shop.name;
-      opt.textContent = shop.name;
-      selector.appendChild(opt);
-    });
-    selector.value = activeShopName;
-
-    selector.onchange = (e) => {
-      activeShopName = e.target.value;
-      const newUrl = new URL(window.location.href);
-      if (activeShopName && activeShopName !== ALL_SHOPS_VALUE) {
-        newUrl.searchParams.set("shop", activeShopName);
-      } else {
-        newUrl.searchParams.delete("shop");
-      }
-      window.history.replaceState(null, "", newUrl.toString());
-      updateCalendarShopLabels();
-      renderCalendar();
-      renderStats();
-    };
+    renderCalendarShopPicker(shops, activeShopName);
 
     updateCalendarShopLabels();
+  }
+
+  function renderCalendarShopPicker(shops, selectedShop) {
+    const root = document.getElementById("header-shop-selector");
+    root.replaceChildren();
+    if (root._shopPickerAbort) root._shopPickerAbort.abort();
+    root._shopPickerAbort = new AbortController();
+    const choices = [{ name: ALL_SHOPS_VALUE, label: "All Shops" }, ...shops.map(shop => ({ name: shop.name, label: shop.name }))];
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "inline-flex max-w-[260px] items-center gap-2 rounded-lg px-2 py-1.5 text-label-md font-semibold text-on-surface hover:bg-surface-container focus:outline-none focus:ring-2 focus:ring-primary/30";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    const current = document.createElement("span");
+    current.className = "truncate";
+    current.textContent = selectedShop === ALL_SHOPS_VALUE ? "All Shops" : selectedShop;
+    const arrow = document.createElement("span");
+    arrow.className = "material-symbols-outlined shrink-0 text-[20px] text-outline";
+    arrow.textContent = "expand_more";
+    trigger.append(current, arrow);
+
+    const menu = document.createElement("div");
+    menu.className = "shop-picker-menu hidden";
+    const searchWrap = document.createElement("label");
+    searchWrap.className = "mb-2 flex items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3";
+    const searchIcon = document.createElement("span");
+    searchIcon.className = "material-symbols-outlined text-[18px] text-outline";
+    searchIcon.textContent = "search";
+    const search = document.createElement("input");
+    search.type = "search";
+    search.className = "w-full border-0 bg-transparent px-0 py-2 text-sm outline-none focus:ring-0";
+    search.placeholder = "Find a shop...";
+    search.setAttribute("aria-label", "Search shops");
+    searchWrap.append(searchIcon, search);
+
+    const options = document.createElement("div");
+    options.className = "shop-picker-options custom-scrollbar";
+    options.setAttribute("role", "listbox");
+    options.setAttribute("aria-label", "Shops");
+    const empty = document.createElement("p");
+    empty.className = "hidden px-3 py-4 text-center text-sm text-text-secondary";
+    empty.textContent = "No matching shops";
+    const rows = choices.map(choice => {
+      const option = document.createElement("button");
+      option.type = "button";
+      option.className = "shop-picker-option";
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", String(choice.name === selectedShop));
+      option.dataset.shopName = choice.label.toLowerCase();
+      const label = document.createElement("span");
+      label.className = "truncate";
+      label.textContent = choice.label;
+      option.append(label);
+      if (choice.name === selectedShop) {
+        const check = document.createElement("span");
+        check.className = "material-symbols-outlined text-base";
+        check.textContent = "check";
+        option.append(check);
+      }
+      option.addEventListener("click", () => {
+        activeShopName = choice.name;
+        const newUrl = new URL(window.location.href);
+        if (activeShopName && activeShopName !== ALL_SHOPS_VALUE) {
+          newUrl.searchParams.set("shop", activeShopName);
+        } else {
+          newUrl.searchParams.delete("shop");
+        }
+        window.history.replaceState(null, "", newUrl.toString());
+        renderCalendarShopPicker(shops, activeShopName);
+        updateCalendarShopLabels();
+        renderCalendar();
+        renderStats();
+      });
+      options.append(option);
+      return option;
+    });
+    menu.append(searchWrap, options, empty);
+    function closeMenu() {
+      menu.classList.add("hidden");
+      trigger.setAttribute("aria-expanded", "false");
+    }
+    trigger.addEventListener("click", () => {
+      const opening = menu.classList.contains("hidden");
+      menu.classList.toggle("hidden", !opening);
+      trigger.setAttribute("aria-expanded", String(opening));
+      if (opening) search.focus();
+    });
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLowerCase();
+      let visibleCount = 0;
+      rows.forEach(row => {
+        const visible = row.dataset.shopName.includes(query);
+        row.classList.toggle("hidden", !visible);
+        if (visible) visibleCount++;
+      });
+      empty.classList.toggle("hidden", visibleCount > 0);
+    });
+    menu.addEventListener("keydown", event => {
+      if (event.key === "Escape") { closeMenu(); trigger.focus(); }
+    });
+    document.addEventListener("click", event => {
+      if (!root.contains(event.target)) closeMenu();
+    }, { signal: root._shopPickerAbort.signal });
+    root.append(trigger, menu);
   }
 
   function updateCalendarShopLabels() {
