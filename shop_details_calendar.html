@@ -453,15 +453,7 @@
 <div class="space-y-2">
 <div class="flex flex-wrap items-center justify-between gap-2">
 <label class="block text-label-md font-label-md text-on-surface-variant" for="post-caption">Caption</label>
-<div class="flex flex-wrap items-center gap-2">
-<input id="caption-ai-brief" class="h-9 min-w-[180px] rounded-lg border border-border-subtle bg-white px-3 text-label-sm" type="text" maxlength="300" placeholder="Optional: audience or key points" aria-label="Caption brief for Gemini">
-<select id="caption-ai-tone" class="h-9 rounded-lg border border-border-subtle bg-white px-3 text-label-sm" aria-label="Caption tone"><option>Professional</option><option>Warm</option><option>Informative</option><option>Energetic</option></select>
-<button type="button" onclick="generateCaptionDraft()" class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-3 text-label-sm font-semibold text-primary hover:bg-primary/10">
-<span class="material-symbols-outlined text-base" aria-hidden="true">auto_awesome</span>Draft with Gemini
-</button>
 </div>
-</div>
-<p id="caption-ai-status" class="text-xs text-text-secondary" aria-live="polite">Clicking Draft sends the post title, category, platform, and brief to Google Gemini. Do not include confidential or personal information; review the suggestion before saving.</p>
 <textarea id="post-caption" class="w-full p-3 rounded-lg border border-border-subtle focus:ring-2 focus:ring-primary/20 focus:border-primary bg-surface-bright text-body-md outline-none resize-none" rows="4"></textarea>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
@@ -1577,31 +1569,5 @@
     renderStats();
   }
 
-  async function generateCaptionDraft() {
-    const button = document.querySelector('#edit-post-modal button[onclick="generateCaptionDraft()"]');
-    const status = document.getElementById("caption-ai-status");
-    const caption = document.getElementById("post-caption");
-    const platform = document.querySelector(".post-platform-select")?.value || "";
-    if (!button || !status || !caption) return;
-    button.disabled = true;
-    status.textContent = "Asking Gemini to draft a caption...";
-    try {
-      const result = await API.generateCaption({
-        title: document.getElementById("post-title").value,
-        category: document.getElementById("post-category").value,
-        platform,
-        tone: document.getElementById("caption-ai-tone").value,
-        brief: document.getElementById("caption-ai-brief").value
-      });
-      if (!result || result.status !== "success" || !result.caption) throw new Error(result?.message || API.getLastError() || "Caption generation failed.");
-      caption.value = result.caption;
-      caption.dispatchEvent(new Event("input", { bubbles: true }));
-      status.textContent = "Draft ready. Review and edit it before saving.";
-    } catch (error) {
-      status.textContent = error.message || "Gemini could not draft a caption. Check setup and try again.";
-    } finally {
-      button.disabled = false;
-    }
-  }
 </script>
 </body></html>
