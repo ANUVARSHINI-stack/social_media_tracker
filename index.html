@@ -6,9 +6,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <script src="config.js?v=20260616f"></script>
-<script src="api.js?v=20260616k"></script>
+<script src="api.js?v=20261101a"></script>
 <script src="auth.js?v=20260630a"></script>
-<script src="shared.js?v=20260616m"></script>
+<script src="shared.js?v=20261101a"></script>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -256,7 +256,7 @@
 </div>
 </div>
 <!-- Mini Stats Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-gutter">
+<div id="dashboard-mini-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-gutter">
 <div class="bg-white p-6 rounded-xl border border-border-subtle shadow-premium transition-all">
 <p class="font-label-sm text-label-sm text-text-secondary uppercase mb-2">Total Shops</p>
 <div class="flex items-center justify-between">
@@ -416,6 +416,7 @@
     // Initial render
     renderDashboard();
     populateAssignedPersonDropdown();
+    renderWorkflowInsights();
 
     // Bind search bar
     const searchInput = document.querySelector('header input[type="text"]');
@@ -437,16 +438,64 @@
     window.addEventListener("api-data-refreshed", () => {
       renderDashboard();
       populateAssignedPersonDropdown();
+      renderWorkflowInsights();
     });
     window.addEventListener("api-local-change", () => {
       renderDashboard();
+      renderWorkflowInsights();
     });
 
     API.forceSync().then(() => {
       renderDashboard();
       populateAssignedPersonDropdown();
+      renderWorkflowInsights();
     });
   });
+
+  function renderWorkflowInsights() {
+    const stats = document.getElementById("dashboard-mini-stats");
+    if (!stats) return;
+    let section = document.getElementById("dashboard-workflow-pulse");
+    if (!section) {
+      section = document.createElement("section");
+      section.id = "dashboard-workflow-pulse";
+      section.className = "mb-gutter rounded-xl border border-border-subtle bg-white px-5 py-4";
+      section.setAttribute("aria-live", "polite");
+      stats.insertAdjacentElement("afterend", section);
+    }
+    const posts = API.getPosts();
+    const today = formatDashboardDate(new Date());
+    const overdue = posts.filter(post => post.status === "Pending" && post.postingDate && post.postingDate < today).length;
+    const unassigned = posts.filter(post => !String(post.assignedPerson || "").trim()).length;
+    const nextWeek = new Date();
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    const until = formatDashboardDate(nextWeek);
+    const upcoming = posts.filter(post => post.status === "Pending" && post.postingDate >= today && post.postingDate <= until).length;
+    const insights = [
+      { label: "Overdue posts", value: overdue, icon: "event_busy", tone: overdue ? "text-status-missed" : "text-status-completed" },
+      { label: "Unassigned posts", value: unassigned, icon: "person_off", tone: unassigned ? "text-status-scheduled" : "text-status-completed" },
+      { label: "Due in the next 7 days", value: upcoming, icon: "event_upcoming", tone: "text-primary" }
+    ];
+    section.innerHTML = `
+      <div class="mb-3 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-sm font-semibold text-text-primary">Workflow pulse</h3>
+          <p class="mt-0.5 text-xs text-text-secondary">A live view of work that may need attention</p>
+        </div>
+        <span class="material-symbols-outlined text-text-secondary" aria-hidden="true">insights</span>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        ${insights.map(item => `
+          <div class="flex items-center gap-3 border-t border-border-subtle pt-3 sm:border-t-0 sm:border-l sm:pl-4 sm:first:border-l-0 sm:first:pl-0">
+            <span class="material-symbols-outlined ${item.tone}" aria-hidden="true">${item.icon}</span>
+            <div><p class="text-lg font-semibold leading-6 ${item.tone}">${item.value}</p><p class="text-xs text-text-secondary">${item.label}</p></div>
+          </div>`).join("")}
+      </div>`;
+  }
+
+  function formatDashboardDate(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
 
   function getActiveMonth(posts) {
     const today = new Date();

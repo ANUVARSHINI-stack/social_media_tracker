@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="config.js?v=20260616f"></script>
-    <script src="api.js?v=20260616k"></script>
+    <script src="api.js?v=20261101a"></script>
     <script src="auth.js?v=20260630a"></script>
-    <script src="shared.js?v=20260616m"></script>
+    <script src="shared.js?v=20261101a"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .material-symbols-outlined {
@@ -178,20 +178,38 @@
                     <h3 class="text-headline-md font-headline-md text-text-primary">Analytics & Performance Reports</h3>
                     <p class="text-text-secondary text-body-md">Analyze publishing performance across all active storefronts and platforms.</p>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-3">
                     <!-- Shop Filter Dropdown -->
-                    <div class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-xl min-w-[200px]">
+                    <div class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-lg min-w-[180px]">
                         <span class="material-symbols-outlined text-outline" data-icon="storefront">storefront</span>
                         <select id="reports-shop-filter" class="border-none focus:ring-0 bg-transparent text-label-md w-full cursor-pointer p-0">
                             <option value="all">All Shops</option>
                         </select>
                     </div>
+                    <label class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-lg text-label-sm text-text-secondary">
+                        <span>From</span>
+                        <input id="reports-date-from" type="date" aria-label="From posting date" class="border-0 bg-transparent p-0 text-label-md focus:ring-0">
+                    </label>
+                    <label class="flex items-center gap-2 px-3 py-2 bg-white border border-border-subtle rounded-lg text-label-sm text-text-secondary">
+                        <span>To</span>
+                        <input id="reports-date-to" type="date" aria-label="To posting date" class="border-0 bg-transparent p-0 text-label-md focus:ring-0">
+                    </label>
+                    <select id="reports-assignee-filter" aria-label="Filter by assigned contributor" class="min-w-[170px] rounded-lg border border-border-subtle bg-white px-3 py-2 text-label-md">
+                        <option value="all">All contributors</option>
+                    </select>
+                    <select id="reports-status-filter" aria-label="Filter by publishing status" class="min-w-[150px] rounded-lg border border-border-subtle bg-white px-3 py-2 text-label-md">
+                        <option value="all">All statuses</option>
+                        <option value="Posted">Posted</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                    <button type="button" id="reports-clear-filters" class="px-3 py-2 rounded-lg border border-border-subtle bg-white text-label-md font-semibold text-text-secondary hover:bg-surface-container-low">Clear filters</button>
                     <button onclick="exportReportPDF()" class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all active:scale-95">
                         <span class="material-symbols-outlined text-sm" data-icon="download">download</span>
                         <span>Export PDF</span>
                     </button>
                 </div>
             </div>
+            <p id="reports-result-count" class="mt-2 text-label-sm text-text-secondary" aria-live="polite">Showing all posts</p>
 
             <!-- Summary KPIs -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
@@ -281,6 +299,10 @@
             document.getElementById("reports-shop-filter").addEventListener("change", () => {
                 renderAllCharts();
             });
+            ["reports-date-from", "reports-date-to", "reports-assignee-filter", "reports-status-filter"].forEach(id => {
+                document.getElementById(id).addEventListener("change", renderAllCharts);
+            });
+            document.getElementById("reports-clear-filters").addEventListener("click", clearReportFilters);
 
             API.forceSync().then(() => {
                 initReports();
@@ -289,7 +311,9 @@
 
         function initReports() {
             shopsData = API.getShops();
+            postsData = API.getPosts();
             const shopSelect = document.getElementById("reports-shop-filter");
+            const selectedShop = shopSelect.value || "all";
             const requestedShop = new URLSearchParams(window.location.search).get("shop");
             shopSelect.innerHTML = `<option value="all">All Shops</option>`;
             
@@ -305,11 +329,50 @@
                 opt.textContent = requestedShop;
                 shopSelect.appendChild(opt);
             }
-            if (requestedShop) {
-                shopSelect.value = requestedShop;
-            }
+            shopSelect.value = requestedShop || selectedShop;
+            if (![...shopSelect.options].some(option => option.value === shopSelect.value)) shopSelect.value = "all";
+
+            const assigneeSelect = document.getElementById("reports-assignee-filter");
+            const selectedAssignee = assigneeSelect.value || "all";
+            const contributors = [...new Set([
+                ...API.getSettings().filter(setting => setting.type === "TeamMember").map(member => member.name),
+                ...postsData.map(post => post.assignedPerson)
+            ].map(name => String(name || "").trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+            assigneeSelect.innerHTML = '<option value="all">All contributors</option>';
+            contributors.forEach(name => {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                assigneeSelect.appendChild(option);
+            });
+            assigneeSelect.value = contributors.includes(selectedAssignee) ? selectedAssignee : "all";
 
             loadDataAndRender();
+        }
+
+        function clearReportFilters() {
+            document.getElementById("reports-shop-filter").value = "all";
+            document.getElementById("reports-date-from").value = "";
+            document.getElementById("reports-date-to").value = "";
+            document.getElementById("reports-assignee-filter").value = "all";
+            document.getElementById("reports-status-filter").value = "all";
+            renderAllCharts();
+        }
+
+        function getFilteredReportPosts() {
+            const shop = document.getElementById("reports-shop-filter").value;
+            const from = document.getElementById("reports-date-from").value;
+            const to = document.getElementById("reports-date-to").value;
+            const assignee = document.getElementById("reports-assignee-filter").value;
+            const status = document.getElementById("reports-status-filter").value;
+            return postsData.filter(post => {
+                if (shop !== "all" && post.shopName !== shop) return false;
+                if (from && (!post.postingDate || post.postingDate < from)) return false;
+                if (to && (!post.postingDate || post.postingDate > to)) return false;
+                if (assignee !== "all" && post.assignedPerson !== assignee) return false;
+                if (status !== "all" && post.status !== status) return false;
+                return true;
+            });
         }
 
         function loadDataAndRender() {
@@ -319,8 +382,7 @@
         }
 
         function renderKPIs() {
-            const filterShop = document.getElementById("reports-shop-filter").value;
-            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+            const filteredPosts = getFilteredReportPosts();
 
             const total = filteredPosts.length;
             const posted = filteredPosts.filter(p => p.status === "Posted").length;
@@ -331,6 +393,7 @@
             document.getElementById("kpi-posted-posts").textContent = posted;
             document.getElementById("kpi-pending-posts").textContent = pending;
             document.getElementById("kpi-completion-rate").textContent = `${rate}%`;
+            document.getElementById("reports-result-count").textContent = `Showing ${filteredPosts.length} of ${postsData.length} posts`;
         }
 
         function destroyCharts() {
@@ -347,10 +410,10 @@
             renderKPIs();
 
             const filterShop = document.getElementById("reports-shop-filter").value;
-            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+            const filteredPosts = getFilteredReportPosts();
 
             // Chart 1: Shop-wise Performance (Only makes sense when "All Shops" is active, or shows breakdown of categories for that shop)
-            renderShopPerformanceChart(filterShop);
+            renderShopPerformanceChart(filterShop, filteredPosts);
 
             // Chart 2: Monthly Trend
             renderMonthlyTrendChart(filteredPosts);
@@ -362,7 +425,7 @@
             renderCategoryBreakdownChart(filteredPosts);
         }
 
-        function renderShopPerformanceChart(selectedShop) {
+        function renderShopPerformanceChart(selectedShop, filteredPosts = postsData) {
             const ctx = document.getElementById("chart-shop-performance").getContext("2d");
             
             let labels = [];
@@ -373,16 +436,16 @@
                 // Show all shops
                 shopsData.forEach(shop => {
                     labels.push(shop.name);
-                    const shopPosts = postsData.filter(p => p.shopName === shop.name);
+                    const shopPosts = filteredPosts.filter(p => p.shopName === shop.name);
                     postedData.push(shopPosts.filter(p => p.status === "Posted").length);
                     pendingData.push(shopPosts.filter(p => p.status === "Pending").length);
                 });
             } else {
                 // Show performance details by platforms that exist in sheet data.
-                labels = [...new Set(postsData.filter(p => p.shopName === selectedShop).map(p => p.platform).filter(Boolean))];
+                labels = [...new Set(filteredPosts.filter(p => p.shopName === selectedShop).map(p => p.platform).filter(Boolean))];
                 if (labels.length === 0) labels = ["No Data"];
                 labels.forEach(plat => {
-                    const platPosts = postsData.filter(p => p.shopName === selectedShop && p.platform === plat);
+                    const platPosts = filteredPosts.filter(p => p.shopName === selectedShop && p.platform === plat);
                     postedData.push(platPosts.filter(p => p.status === "Posted").length);
                     pendingData.push(platPosts.filter(p => p.status === "Pending").length);
                 });
@@ -570,12 +633,12 @@
 
         function exportReportPDF() {
             const filterShop = document.getElementById("reports-shop-filter").value;
-            const filteredPosts = filterShop === "all" ? postsData : postsData.filter(p => p.shopName === filterShop);
+            const filteredPosts = getFilteredReportPosts();
 
             downloadTablePDF({
                 filename: `reports_data_${filterShop}.pdf`,
                 title: "Reports Data",
-                subtitle: `${filterShop === "all" ? "All Shops" : filterShop} - ${new Date().toLocaleString()}`,
+                subtitle: `${filterShop === "all" ? "All Shops" : filterShop} | ${filteredPosts.length} filtered posts | ${new Date().toLocaleString()}`,
                 columns: [
                     { label: "Post ID", key: "id", width: 1.6 },
                     { label: "Shop Name", key: "shopName", width: 1.4 },

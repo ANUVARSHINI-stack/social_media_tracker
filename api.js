@@ -452,6 +452,10 @@ const API = (() => {
       return lastErrorMessage;
     },
 
+    async generateCaption(request) {
+      return remoteCall("generateCaption", { request: request || {} });
+    },
+
     isLocalMode() {
       return false;
     },

@@ -123,6 +123,100 @@ function injectResponsiveShellStyles() {
   const style = document.createElement("style");
   style.id = "responsive-shell-normalizer";
   style.textContent = `
+    :root {
+      color-scheme: light;
+      --app-ink: #202531;
+      --app-muted: #667085;
+      --app-line: #e3e7ee;
+      --app-canvas: #f5f7fa;
+      --app-accent: #4744e5;
+    }
+    body {
+      color: var(--app-ink);
+      background: var(--app-canvas);
+      -webkit-font-smoothing: antialiased;
+    }
+    aside {
+      background: #fff !important;
+      border-color: var(--app-line) !important;
+    }
+    aside nav a {
+      min-height: 42px;
+      border-radius: 7px !important;
+      transition: background-color .16s ease, color .16s ease;
+    }
+    aside nav a:hover { background: #f4f5f8 !important; }
+    header {
+      background-color: rgba(255, 255, 255, .94) !important;
+      border-color: var(--app-line) !important;
+      backdrop-filter: blur(14px);
+    }
+    main { min-width: 0; }
+    main > header { box-shadow: 0 1px 2px rgba(16, 24, 40, .03); }
+    main > div { min-width: 0; }
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    select,
+    textarea {
+      color: var(--app-ink);
+      border-color: var(--app-line);
+      transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+    }
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+    select:focus,
+    textarea:focus {
+      border-color: #7774ef !important;
+      box-shadow: 0 0 0 3px rgba(71, 68, 229, .12) !important;
+      outline: none;
+    }
+    select:not([multiple]) {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 12px center !important;
+      background-size: 16px 16px !important;
+      padding-right: 38px !important;
+    }
+    select.post-platform-select {
+      background-position: right 6px center !important;
+      background-size: 14px 14px !important;
+      padding-right: 22px !important;
+    }
+    select option { color: #202531; background: #fff; }
+    textarea { line-height: 1.55; }
+    button:not(:disabled) { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(71, 68, 229, .28);
+      outline-offset: 2px;
+    }
+    table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: #f5f6f8;
+    }
+    table tbody tr { transition: background-color .12s ease; }
+    table tbody tr:hover { background-color: #fafbfc; }
+    [id$="-filter-dropdown"], [id$="-dropdown"] {
+      border: 1px solid var(--app-line);
+      border-radius: 8px !important;
+      box-shadow: 0 14px 36px rgba(16, 24, 40, .14);
+    }
+    .modal-overlay, [id$="-modal"] {
+      overscroll-behavior: contain;
+    }
+    .modal-overlay > div, [id$="-modal"] > div {
+      border-radius: 10px !important;
+      box-shadow: 0 24px 70px rgba(16, 24, 40, .2) !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
     aside {
       height: 100dvh !important;
     }
@@ -269,6 +363,11 @@ function injectResponsiveShellStyles() {
       }
     }
     @media (max-width: 520px) {
+      main > div { padding-left: 14px !important; padding-right: 14px !important; }
+      main h2, main h3 { overflow-wrap: anywhere; }
+      button { min-height: 38px; }
+      .modal-overlay { align-items: flex-start !important; padding: 12px !important; }
+      .modal-overlay > div { max-height: calc(100dvh - 24px); overflow-y: auto; }
       #sync-status-pill {
         display: none !important;
       }
